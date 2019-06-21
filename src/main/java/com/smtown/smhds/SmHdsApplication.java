@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 @SpringBootApplication
 @MapperScan(basePackages = {"com.smtown.smhds.*"})
 public class SmHdsApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(SmHdsApplication.class, args);
     }
