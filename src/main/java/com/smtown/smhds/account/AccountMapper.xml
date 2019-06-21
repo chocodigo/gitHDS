@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.smtown.smhds.account.AccountMapper">
+    <select id="accountName" parameterType="String" resultType="com.smtown.smhds.account.Account">
+		SELECT
+		USER_NAME,
+		PASS_WORD,
+		ENAB_LEDD
+		FROM HD_User WHERE USER_NAME = #{user_name}
+	</select>
+
+    <select id="accountAuthority" parameterType="String" resultType="String">
+		SELECT
+		USER_AUTH
+		FROM HD_Auth WHERE USER_NAME = #{user_name}
+	</select>
+</mapper>
