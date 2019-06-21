@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-  - source: target/ROOT.war
+  - source: target/smHDS 0.0.1-SNAPSHOT</.war
     destination: /home/ec2-user/javaapp
 hooks:
   AfterInstall:
