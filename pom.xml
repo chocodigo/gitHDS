@@ -11,6 +11,7 @@
     <groupId>com.smtown</groupId>
     <artifactId>smHDS</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>smHDS</name>
     <description>project for Spring Boot</description>
 
