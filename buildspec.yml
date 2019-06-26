@@ -22,5 +22,5 @@ artifacts:
     - 'appspec.yml'
     - 'template.yml'
     - 'scripts/*'
-    - 'target/smHDS-0.0.1-SNAPSHOT.war'
+    - 'target/ROOT.war'
     - 'template-configuration.json'
