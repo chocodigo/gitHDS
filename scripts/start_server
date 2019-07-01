@@ -1,5 +1,4 @@
 #!/bin/bash
-#cd /opt/tomcat
-#bin/startup.sh
+cd /opt/tomcat
+bin/startup.sh
 
-java -jar /home/ec2-user/javaapp/ROOT.war
