@@ -12,7 +12,7 @@ cd /home/ec2-user/javaapp
 
 
 #!/bin/bash
-BUILD_PATH=$(ls /home/ec2-user/javaapp/*.jar)
+BUILD_PATH=$(ls /home/ec2-user/javaapp/*.war)
 JAR_NAME=$(basename $BUILD_PATH)
 echo "> build 파일명: $JAR_NAME"
 
