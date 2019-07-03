@@ -51,6 +51,7 @@ import com.smtown.smhds.util.PrintPage;
  */
 @Controller
 public class BoardController{
+
     // 요청사항 게시판 서비스(Service) 클래스
     private final BoardService boardService;
 

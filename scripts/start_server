@@ -1,4 +1,6 @@
 #!/bin/bash
-cd /opt/tomcat
-bin/startup.sh
+#cd /opt/tomcat
+#bin/startup.sh
 
+cd /home/ec2-user/javaapp
+BUILD_PATH=
