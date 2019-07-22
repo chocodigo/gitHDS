@@ -24,3 +24,4 @@ artifacts:
     - 'scripts/*'
     - 'target/ROOT.war'
     - 'template-configuration.json'
+  discard-paths: yes
