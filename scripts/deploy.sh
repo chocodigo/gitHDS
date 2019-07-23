@@ -1,3 +1,4 @@
+cd /home/ec2-user/javaapp
 #!/bin/bash
 BUILD_PATH=$(ls /home/ec2-user/javaapp/*.war)
 JAR_NAME=$(basename $BUILD_PATH)
@@ -27,4 +28,4 @@ else
 fi
 
 echo "> $APPLICATION_JAR 배포"
-nohup java -jar $APPLICATION_JAR > /dev/null 2> /dev/null < /dev/null &
+nohup java -jar $APPLICATION_JAR &
