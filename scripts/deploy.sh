@@ -6,7 +6,7 @@ echo "> build 파일명: $JAR_NAME"
 
 echo "> build 파일 복사"
 DEPLOY_PATH=/home/ec2-user/javaapp/
-#cp $BUILD_PATH $DEPLOY_PATH
+cp $BUILD_PATH $DEPLOY_PATH
 
 echo "> springboot-deploy.jar 교체"
 CP_JAR_PATH=$DEPLOY_PATH$JAR_NAME
