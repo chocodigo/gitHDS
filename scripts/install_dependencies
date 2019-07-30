@@ -12,7 +12,7 @@ cd /home/ec2-user/javaapp
 
 
 #!/bin/bash
-BUILD_PATH=$(ls /home/ec2-user/javaapp/*.war)
+BUILD_PATH=$(ls /home/ec2-user/javaapp/ROOT.war)
 JAR_NAME=$(basename $BUILD_PATH)
 echo "> build 파일명: $JAR_NAME"
 
@@ -41,4 +41,4 @@ else
 fi
 
 echo "> $APPLICATION_JAR 배포"
-nohup java -jar $APPLICATION_JAR
+nohup java -jar ROOT.war
