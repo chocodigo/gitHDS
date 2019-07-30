@@ -22,6 +22,6 @@ artifacts:
     - 'appspec.yml'
     - 'template.yml'
     - 'scripts/*'
-    - 'ROOT.war'
+    - 'target/ROOT.war'
     - 'template-configuration.json'
   discard-paths: yes
