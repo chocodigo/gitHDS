@@ -5,12 +5,12 @@ files:
     destination: /home/ec2-user/javaapp
 hooks:
   AfterInstall:
-    - location: scripts/codestar_remote_access
+    - location: codestar_remote_access
       timeout: 300
       runas: root
-    - location: scripts/deploy.sh
+    - location: deploy.sh
       timeout: 300
       runas: root
-    - location: scripts/healthCheck.sh
+    - location: healthCheck.sh
       timeout: 300
       runas: root
