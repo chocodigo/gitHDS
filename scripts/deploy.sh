@@ -28,6 +28,4 @@ else
 fi
 
 echo "> $APPLICATION_JAR 배포"
-nohup java -jar ROOT.war &
-
-/dev/null 2>&1 &
+nohup java -jar ROOT.war > /dev/null 2> /dev/null < /dev/null &
