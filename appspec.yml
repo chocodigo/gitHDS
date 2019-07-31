@@ -6,11 +6,11 @@ files:
 hooks:
   AfterInstall:
     - location: codestar_remote_access
-      timeout: 300
+      timeout: 60
       runas: root
     - location: deploy.sh
-      timeout: 300
+      timeout: 60
       runas: root
     - location: healthCheck.sh
-      timeout: 300
+      timeout: 60
       runas: root
