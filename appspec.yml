@@ -8,9 +8,11 @@ hooks:
     - location: codestar_remote_access
       timeout: 60
       runas: root
+  ApplicationStart:
     - location: deploy.sh
       timeout: 60
       runas: root
+  ValidateService:
     - location: healthCheck.sh
       timeout: 60
       runas: root
