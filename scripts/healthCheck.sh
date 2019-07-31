@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "> Health check 시작"
-echo "> curl -s http://localhost:8080/actuator/health "
+echo "> curl -s http://localhost:8080/ "
 
 for RETRY_COUNT in {1..15}
 do
