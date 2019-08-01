@@ -13,7 +13,7 @@ do
       break
   else
       echo "> Health check의 응답을 알 수 없거나 혹은 status가 UP이 아닙니다."
-      echo "> Health check: ${RESPONSE}"
+      echo "> Health check: ${RESPONSE} & ${UP_COUNT}"
   fi
 
   if [ $RETRY_COUNT -eq 10 ]
