@@ -60,7 +60,6 @@ public class BoardController{
     // faq 게시판 서비스(Service) 클래스
     private final FaqService faqService;
 
-
     @Autowired
     public BoardController(BoardService boardService, NoticeService noticeService, FaqService faqService){
         this.boardService = boardService;
