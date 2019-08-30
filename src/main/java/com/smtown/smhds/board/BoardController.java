@@ -43,7 +43,7 @@ import com.smtown.smhds.util.PrintPage;
  * == Modification Information ==
  * Date		Modifier		Comment
  * ====================================================
- * 2019.05.21	최해림		Initial Created.
+ * 2019.05.21	최해림		Initial Created.           \
  * ====================================================
  * </pre>
  *
@@ -88,6 +88,7 @@ public class BoardController{
     public String login() {
         return "main/login";
     }
+
     /*
      * 비밀번호 초기화 페이지
      * @param
