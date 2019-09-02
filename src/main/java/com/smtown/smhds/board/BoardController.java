@@ -49,6 +49,7 @@ import com.smtown.smhds.util.PrintPage;
  *
  * Copyright SM Entertainment.(C) All right reserved.
  */
+
 @Controller
 public class BoardController{
     // 요청사항 게시판 서비스(Service) 클래스
