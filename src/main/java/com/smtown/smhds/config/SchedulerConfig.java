@@ -21,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.smtown.smhds.account.ADUserVO;
 import com.smtown.smhds.account.AccountService;
 
-@Transactional
-@Component
 public class SchedulerConfig {
 
 	private static final Logger log = LoggerFactory.getLogger(SchedulerConfig.class);
@@ -31,7 +29,7 @@ public class SchedulerConfig {
 	private AccountService accountService;
 
 	@SuppressWarnings("unchecked")
-	@Scheduled(cron = "10 * * * * *")
+	//@Scheduled(cron = "10 * * * * *")
 	public void cronJobSch() throws Exception {
 		// TODO
 
