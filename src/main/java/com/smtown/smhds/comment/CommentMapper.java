@@ -1,7 +1,5 @@
 package com.smtown.smhds.comment;
 
-import java.util.List;
-
 /**
  * <pre>
  *	CommentMapper.java - 댓글 매퍼
@@ -23,15 +21,16 @@ import java.util.List;
  */
 
 public interface CommentMapper {
-    public int commentCount() throws Exception;										//댓글 갯수
+	
+	public int commentInsert(CommentVO comment) throws Exception;					//댓글 작성
+	
+	public int commentUpdate(CommentVO comment) throws Exception;					//댓글 수정
+	
+	public int commentDelete(String comm_idxx) throws Exception;					//댓글 삭제
+	
+	public String commentSelectIdxx() throws Exception;				//comm_idxx 생성
 
-    public List<CommentVO> commentList(String idxx_numb) throws Exception;			//댓글 목록
-
-    public int commentInsert(CommentVO comment) throws Exception;					//댓글 작성
-
-    public int commentUpdate(CommentVO comment) throws Exception;					//댓글 수정
-
-    public int commentDelete(String comm_idxx) throws Exception;					//댓글 삭제
-
-    public String commentSelectIdxx() throws Exception;				//comm_idxx 생성
+	public CommentVO commentDetail(String idxx_numb) throws Exception;	//답글 상세
+	
+	public String commentSelectCommIdxx(String idxx_numb) throws Exception;	//답글  comm_idxx 받아오기
 }

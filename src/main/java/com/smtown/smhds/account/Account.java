@@ -4,26 +4,62 @@ import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+/**
+ * <pre>
+ *	Account.java - 계정VO
+ * </pre>
+ *
+ * @author	최해림
+ * @since	2019.05.21
+ * @version	1.0
+ *
+ * <pre>
+ * == Modification Information ==
+ * Date		Modifier		Comment
+ * ====================================================
+ * 2019.05.21	최해림		Initial Created.
+ * ====================================================
+ * </pre>
+ *
+ * Copyright SM Entertainment.(C) All right reserved.
+ */
 public class Account implements UserDetails{
-    private String user_name;
-    private String pass_word;
-    private boolean enab_ledd;
-    private Collection<? extends GrantedAuthority> authorities;
-    private String birt_hday;
-    private String user_mail;
-    private String real_name;
-    private String dept_ment;
+    private String user_name;	//사용자 ID
+    private String pass_word;	//사용자 비밀번호
+    private boolean enab_ledd;	//사용가능한 계정인지 여부
+    private Collection<? extends GrantedAuthority> authorities;		//권한 목록
+    private String phon_enum;	//사용자 번호
+    private String user_mail;	//사용자 메일
+    private String real_name;	//사용자 실제 이름
+    private String dept_ment;	//사용자 부서
+    private String comm_pany;	//사용자 회사
+    private String posi_tion;	//사용자 직책
 
-    public String getBirt_hday() {
-        return birt_hday;
+    public String getComm_pany() {
+        return comm_pany;
     }
 
-    public void setBirt_hday(String birt_hday) {
-        this.birt_hday = birt_hday;
+    public void setComm_pany(String comm_pany) {
+        this.comm_pany = comm_pany;
     }
 
-    public String getUser_mail() {
+    public String getPosi_tion() {
+        return posi_tion;
+    }
+
+    public void setPosi_tion(String posi_tion) {
+        this.posi_tion = posi_tion;
+    }
+
+    public String getPhon_enum() {
+		return phon_enum;
+	}
+
+	public void setPhon_enum(String phon_enum) {
+		this.phon_enum = phon_enum;
+	}
+
+	public String getUser_mail() {
         return user_mail;
     }
 

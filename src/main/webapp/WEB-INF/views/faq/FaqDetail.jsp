@@ -1,14 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/include/header.jsp" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ include file="../common/bootstrap.jsp" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>FAQ detail</title>
-<script type="text/javascript" src="/resources/vendor/jquery/jquery-1.9.1.min.js"></script>
 </head>
 <body>
 <script type="text/javascript">
@@ -45,66 +43,84 @@
  	$(document).ready(function(){
  		
  	});
- 
+ /*-----------------------------------+
+  |  02.삭제 버튼 클릭 時 처리 할 사항  |
+  +------------------------------------*/
+ 	function faq_delete(idxx_numb){
+ 	    if(confirm("게시 글을 삭제하시겠습니까?")){
+ 	        data={'idxx_numb':idxx_numb};
+ 	        ajaxJsonCallSync("/faq_delete", data, faqDeleteSuccessCallBack,"${_csrf.headerName}", "${_csrf.token}");     //faq 수정 페이지로 이동
+ 	        ajaxJsonCallSync("/faq_list", data, faqSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");     //faq 목록으로 이동
+ 	    }else{}
+ 	}
+
+ /*-----------------------------------+
+  |  03.수정 버튼 클릭 時 처리 할 사항  |
+  +------------------------------------*/
+ 	function faq_update(idxx_numb){
+ 	    data={'idxx_numb':idxx_numb};
+ 	    ajaxJsonCallSync("/faq_update", data, faqSuccessCallBack,"${_csrf.headerName}", "${_csrf.token}");     //faq 수정 페이지로 이동
+ 	}
+
+/*-----------------------------------+
+|  05. 통신 성공 시 처리할 사항|
++------------------------------------*/
+    function faqSuccessCallBack(data){
+        $("#box").html(data);     //box에 필요한 페이지 출력
+    }
+
+/*-----------------------------------+
+|  06. 삭제 통신 성공 시 처리할 사항|
++------------------------------------*/
+    function faqDeleteSuccessCallBack(data){
+        alert("삭제 완료");
+    }
 </script>
-
-<div class="container" style="width: 100%; margin-top: 90px;">
-	<div style="margin-bottom: 10px;">
-		<div class="mdl-card__title" style="height:60px;">
-			<img class="main-image" src="${contextPath}/resources/images/faq.png" >
-			<h2 class="mdl-card__title-text" style="display: inline-block;">FAQ</h2>
-		</div>
-	</div>
-	<div class="mdl-card__supporting-text" style="width: 100%;">
-		<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
-			<thead>
-				<tr align = "center">
-					<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align: middle;">순번</th>
-					<td class="mdl-data-table__cell--non-numeric">${detail.idxx_numb}</td>
-					<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align: middle;">작성자</th>
-					<td class="mdl-data-table__cell--non-numeric">${detail.user_name}</td>
-				</tr>
-				<tr align = "center">
-					<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align: middle;">제목</th>
-					<td class="mdl-data-table__cell--non-numeric">${detail.titl_name}</td>
-					<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align: middle;">작성일</th>
-					<td class="mdl-data-table__cell--non-numeric"><fmt:formatDate pattern="yyyy-MM-dd" value="${detail.crea_date}"/></td>
-				</tr>
-				<tr align = "center">
-					<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle; height: 300px;">내용</th>
-					<td class="mdl-data-table__cell--non-numeric" colspan="3" style="vertical-align: top; white-space:pre;">${detail.cont_ents}</td>
-				</tr>
-				<tr align = "center">
-					<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align: middle;">첨부파일</th>
-					<td class="mdl-data-table__cell--non-numeric" colspan="3"><a href="/fileDown/${files.idxx_numb}">${files.file_orig}</a></td>
-				</tr>
-				
-				<c:forTokens var="token" items="${files.file_orig }" delims="." varStatus="status">
-					<c:if test="${status.last }">
-						<c:choose>
-							<c:when test="${token eq 'png' || token eq 'jpg' || token eq 'jpeg' || token eq 'gif' || token eq 'bmp'}">
-								<tr class="detail_th">
-									<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align: middle;">첨부파일 이미지</th>
-									<td class="mdl-data-table__cell--non-numeric" colspan="3">
-										<img class="file_img" src="/resources/upload/${files.file_name}">
-										
-									</td>
-								</tr>
-							</c:when>
-						</c:choose>
-					</c:if>
-				</c:forTokens>
-			</thead>
-		</table>
-		<div class="detail_btn_group" style="display: center;">
-			<sec:authorize access="hasAuthority('001')">
-				<button class="mdl-button mdl-js-button" onclick="location.href='/faq_update/${detail.idxx_numb}'">수정</button>
-				<button class="mdl-button mdl-js-button" onclick="location.href='/faq_delete/${detail.idxx_numb}'">삭제</button>
-			</sec:authorize>
-			<button class="mdl-button mdl-js-button" onclick="location.href='/faq_list'">목록</button>
-		</div>
-	</div>
+<div class="table_box">
+    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('faq');">
+    <table>
+        <colgroup>
+            <col width="10%">
+            <col width="40%" >
+            <col width="10%" >
+            <col width="20%">
+        </colgroup>
+        <tbody>
+            <tr>
+                <td>제목</td>
+                <td>${detail.titl_name}</td>
+                <td>작성자</td>
+                <td>${detail.crea_user}</td>
+            </tr>
+            <tr>
+                <td>내용</td>
+                <td colspan="3">${detail.cont_ents}</td>
+            </tr>
+            <tr>
+                <td>첨부파일</td>
+                <td colspan="3"><a href="/fileDown/${files.idxx_numb}">${files.file_orig}</a></td>
+            </tr>
+            <c:forTokens var="token" items="${files.file_orig }" delims="." varStatus="status">
+				<c:if test="${status.last }">
+					<c:choose>
+						<c:when test="${token eq 'png' || token eq 'jpg' || token eq 'jpeg' || token eq 'gif' || token eq 'bmp'}">
+							<tr class="detail_th">
+								<td>첨부파일 이미지</td>
+								<td colspan="3">
+									<img class="file_img" src="/resources/upload/${files.file_name}">
+								</td>
+							</tr>
+						</c:when>
+					</c:choose>
+				</c:if>
+			</c:forTokens>
+        </tbody>
+    </table>
+    <div class="btn_group">
+        <button type="button" class="btn" onclick="faq_update('${detail.idxx_numb}');">수정</button>
+        <button type="button" class="btn" onclick="faq_delete('${detail.idxx_numb}');">삭제</button>
+    </div>
+    <div class="clear_fix"></div>
 </div>
-
 </body>
 </html>

@@ -1,15 +1,12 @@
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/include/header.jsp" %>
-<%@ include file="../common/bootstrap.jsp" %>
-
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert Form</title>
-<script type="text/javascript" src="/resources/vendor/jquery/jquery-1.9.1.min.js"></script>
 </head>
 <body>
 <script type="text/javascript">
@@ -44,117 +41,152 @@
   |  01.최초 화면 Load時 처리 할 사항  |
   +------------------------------------*/
  	$(document).ready(function(){
- 		
  	});
 	
   /*-----------------------------------+
   |  02. 작성 버튼 클릭 시 진행되는 함수|
   +------------------------------------*/
-  function insert(){
-	  var titl_name = $("#titl_name").val();	//글 제목
-	  var cont_ents = $("#cont_ents").val();	//글 내용
-	  var select_code =  $("#select_category option:selected").val();	//선택한 값의 code 가져오기
-	  
-	  if(titl_name === ""){
-		  alert("제목을 입력하세요");
-		  $("#titl_name").focus();
-	  }else if(cont_ents === ""){
-		  alert("내용을 입력하세요");
-		  $("#cont_ents").focus();
-	  }else if (select_code === "cate_all"){
-		  alert("카테고리를 선택하세요.");
-	  }else{
-		  $("#insert_form").submit();
-	  }
-  }
+function insert(){
+	var titl_name = $("#titl_name").val();	//글 제목
+	var cont_ents = $("#cont_ents").val();	//글 내용
+	var select_code =  $("#select_category option:selected").val();	//선택한 값의 code 가져오기
+	 
+	if(titl_name == ""){
+		alert("제목을 입력하세요");
+		$("#titl_name").focus();
+	}else if(cont_ents ==""){
+		alert("내용을 입력하세요");
+		$("#cont_ents").focus();
+	}else if (select_code =="cate_all"){
+		 alert("카테고리를 선택하세요.");
+	}else if(confirm("게시 글을 등록하시겠습니까?")){
+		$("#insert_form").submit();
+	}else{
+	}
+	
+/* 		var params = new Object(); 		 /* 파라미터를 담을 Object 선언  */
+		var submitFlag = true;			 /* validation Flag */
+		var objKeys = []; 				 /* object key 이름이 담길 배열 */
+		var thisId;						 /* 태그 속성 중 name으로 $("#name") 설정*/
+		var tagName;					 /* 태그네임 변수*/
+
+		  /* 파라미터 세팅  */
+ 		  params = {						 
+ 					titl_name : $("#titl_name").val(),
+ 					select_category :  $("#select_category option:selected").val(),
+ 					cont_ents : $("#cont_ents").val()
+ 				  }
+
+ 		 /* 파라미터 key 조회  */
+ 		 objKeys = Object.keys(params);
+
+ 		 /* key와 input, select, textarea의 name 매칭으로 validation check  */
+		$.each(objKeys, function(idx, obj){
+					  
+			thisId = $("#"+obj);
+			tagName = $thisObj.prop("tagName");
+			
+			var cmt = "";
+			
+			/* TagName에 따른 문구 분기처리  */
+			if($tagName == "INPUT" || $tagName == "TEXTAREA"){
+				cmt = "을(를) 입력해주세요.";
+			} else if($tagName == "SELECT"){
+				cmt = "을(를) 선택해주세요.";
+			}
+			
+			/* 해당 값 없을 시 alert, focus 처리  */
+			if($thisObj.val() == ""){
+				alert($thisObj.prop("title") + cmt);
+				$thisObj.focus();
+				flag = false;
+				return false;
+			}
+		});
+			 if(submitFlag)
+		 	$("#insert_form").submit(); */
+}
  /*-----------------------------------+
- |  03.셀렉트박스 변경 시 내용 placeholder 변경 처리  |
+ |  03.셀렉트박스 카테고리 값 처리  |
  +------------------------------------*/
  function changePlaceholder(){
 	 var select_code =  $("#select_category option:selected").val();	//선택한 값의 code 가져오기
 	 
 	 switch(select_code){
 	 case '01':
-		 $("#cont_ents").attr("placeholder","PC 문제 셀프체크");
 		 $("#cate_gory").val(select_code);
 		 break;
 	 case '02':
-		 $("#cont_ents").attr("placeholder","Network 문제 셀프체크");
 		 $("#cate_gory").val(select_code);
 		 break;
 	 case '03':
-		 $("#cont_ents").attr("placeholder","기타 요청사항 문제 셀프체크");
 		 $("#cate_gory").val(select_code);
 		 break;
+     case '04':
+     	$("#cate_gory").val(select_code);
+    	 break;
+     case '05':
+   		 $("#cate_gory").val(select_code);
+   		 break;
+     case '06':
+     	$("#cate_gory").val(select_code);
+     	break;
+     case '07':
+     	$("#cate_gory").val(select_code);
+     	break;
 	 }
  }
 </script>
 
 <sec:authentication var="principal" property="principal"/>
 
+<div class="table_box">
+    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('list');">
+    <form id="insert_form" action="/insertProc" method="post" enctype="multipart/form-data">
+        <table>
+            <colgroup>
+                <col width="15%">
+                <col width="85%" >
+            </colgroup>
 
-<div class="container" style="width: 100%; margin-top: 90px;">
-	<div class="mdl-card__title" style="height:60px;">
-			<img class="main-image" style="margin-top: -20px;"
-				src="${contextPath}/resources/images/question.png" />
-				<h2 class="mdl-card__title-text" style="display: inline-block;">요청사항</h2>
-		</div>
-	<div class="mdl-card__supporting-text" style="width: 100%; font-size: 12px;">
-		<form id="insert_form" class="form-group" action="/insertProc" method="post" enctype="multipart/form-data">
-			
-			<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
-				<thead>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%">제목</th>
-						<td class="mdl-data-table__cell--non-numeric" width="90%"><input type="text" class="form-control" id="titl_name" name="titl_name"></td>
-	
-					</tr>
-					<tr>
-						<th class="mdl-data-table__cell--non-numeric" width="10%">문제상황</th>
-						<td class="mdl-data-table__cell--non-numeric" width="90%">
-							<select id="select_category" style="border:0" onchange="changePlaceholder()">
-								<option value="cate_all">카테고리</option>
-								<c:forEach var="item" items="${category_list }">
-									<option value="${item.cate_gory }">${item.cate_name }</option>
-								</c:forEach>
-							</select>
-						</td>
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%">작성자</th>
-						<td class="mdl-data-table__cell--non-numeric">${principal.username }</td>
-		
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">내용</th>
-						<td class="mdl-data-table__cell--non-numeric"><textarea class="form-control" id="cont_ents" name="cont_ents" rows="10" style="resize: none;"></textarea></td>
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">파일 첨부</th>
-						<td class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">
-							<div class="file_input">
-								
-								<input type="text" readonly="readonly" title="File Route" id="files">
-								<label>
-									파일첨부
-									<input multiple="multiple" type="file" name="files "onchange="javascript:document.getElementById('files').value=this.value">
-								</label>
-							</div>
-						</td>
-					</tr>
-				</thead>
-			</table>
-	
-
-			<input type="hidden" name="${_csrf.parameterName}" value = "${_csrf.token}"/>
-			<input type="hidden" id="cate_gory"name="cate_gory"/>
-		</form>
-		<div class="detail_btn_group">
-			<button type="button" class="mdl-button mdl-js-button" onclick="insert()">작성</button>
-			<button type="button" class="mdl-button mdl-js-button" onclick="location.href='/list/${cate_gory}'">목록</button>
-		</div>
-	</div>
+            <tbody>
+                <tr>
+                    <td>제목</td>
+                    <td><input type="text" class="form-control" id="titl_name" name="titl_name" title="제목"></td>
+                </tr>
+                <tr>
+                    <td>작성자</td>
+                    <td>${real_name}</td>
+                </tr>
+                <tr>
+                    <td>문제상황</td>
+                    <td>
+						<select id="select_category" style="border:0" onchange="changePlaceholder()" title="카테고리">
+							<option value="cate_all">카테고리</option>
+							<c:forEach var="item" items="${category_list }">
+								<option value="${item.comm_code }">${item.code_name }</option>
+							</c:forEach>
+						</select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>내용</td>
+                    <td><textarea class="form-control" id="cont_ents" name="cont_ents" rows="10" title="내용"></textarea></td>
+                </tr>
+                <tr>
+                    <td>첨부파일</td>
+                    <td><input type="file" name="files "onchange="javascript:document.getElementById('files').value=this.value"></td>
+                </tr>
+                <input type="hidden" name="${_csrf.parameterName}" value = "${_csrf.token}"/>
+                <input type="hidden" id="cate_gory"name="cate_gory"/>
+            </tbody>
+        </table>
+    </form>
+    <div class="insert_btn">
+        <button type="button" class="btn" onclick="insert();">등록</button>
+    </div>
+    <div class="clear_fix"></div>
 </div>
-<%@ include file="/WEB-INF/views/include/footer.jsp" %>   
+
 </body>
 </html>

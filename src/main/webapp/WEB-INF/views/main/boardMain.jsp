@@ -1,16 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="../common/bootstrap.jsp" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ include file="/WEB-INF/views/include/header.jsp" %>
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html >
+<html style="height:969px;" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <title></title>
 <meta charset="UTF-8">
-<script type="text/javascript" src="/resources/vendor/jquery/jquery-1.9.1.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-
 <script type="text/javascript">
 /***************************************************************************************************
  * # Program: 	Login.jsp 최초 로그인 페이지 생성
@@ -38,12 +37,51 @@
  ************************/
  
  
- 
+ var isItSearching = 0;      //검색 중인지 체크하는 값 초기 - 0
  /*-----------------------------------+
  |  01.최초 화면 Load時 처리 할 사항  |
  +------------------------------------*/
  $(document).ready(function(){
+
 	getCookie();							//쿠키 상태를 통해 팝업 출력
+	data={};
+
+    //tab_menu 파라미터 통해 첫 화면 결정
+    if("${tab_menu}"!=""){
+        var page = "${tab_menu}";
+        tab_menu(page);
+    }else{
+        ajaxJsonCallSync("/notice_list", data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");     //첫화면 공지사항 리스트 출력
+    }
+
+    //검색어 입력 후 엔터할 경우 처리
+	$("#search").keydown(function(key){
+	    if(key.keyCode==13){
+		    search();
+		}
+	});
+	var end_day = new Date().toISOString().substring(0,10);
+    var arr = end_day.split('-');
+    var today = new Date(arr[0],arr[1],arr[2]);
+    var start_month = today.getMonth() - 3;
+    var start_day = new Date(arr[0],start_month,arr[2]).toISOString().substring(0,10);
+
+    $("#end_day").val(end_day);
+    $("#start_day").val(start_day);
+
+	//날짜 입력칸 클릭했을 시 달력 팝업
+	$("#start_day").datepicker();
+	$("#end_day").datepicker();
+
+	//이용방법 버튼 클릭 시
+	$("#howto_btn").click(function(){
+	     $("#howto_popup").modal('show');
+	});
+
+	//관리자 페이지 버튼 클릭 시
+	$("#popup_admin_btn").on("click", function(){
+        window.open("/admin/","관리자 페이지","width=400, height=300, left=300, top=150");
+	});
  });
  
  /*-----------------------------------+
@@ -73,21 +111,14 @@
  function getCookie(){
 	 var cookiedata = document.cookie;
 	 if(cookiedata.indexOf("todayCookie=done")<0){	//todayCookie가 설정돼있지 않으면 팝업 출력
-		 $("#howto_popup").css("display","block");
+		 $("#howto_popup").modal('show');
 	 }else{
-		 $("#howto_popup").css("display","none");	//todayCookie가 설정돼있으면 팝업 사라짐
+		 $("#howto_popup").modal('hide');	//todayCookie가 설정돼있으면 팝업 사라짐
 	 }
  }
  
- /*-----------------------------------+
- |  05. 검색 버튼 클릭 시 진행 |
- +------------------------------------*/
- function search(){
-	 location.href="/list?search="+$("#search_box").val();		//검색 창에 있는 값으로 검색
- }
- 
  /*----------------------+
- |  06. 검색 Enter 처리  	 |
+ |  05. 검색 Enter 처리  	 |
  +-----------------------*/
  function meEnter(){
 	 var keyCode = event.keyCode;	//검색 input 박스에서 발생한 키 코드를 불러온다. 
@@ -98,106 +129,335 @@
 	}
 	 
  }
+
+ /*----------------------+
+ |  06. 탭 통신 성공시 처리  |
+ +-----------------------*/
+ function listSuccessCallBack(data){
+
+    $("#box").html(data);     //table_box에 리스트 출력
+ }
+
+ /*----------------------+
+ |  07. 탭 클릭시 처리  |
+ +-----------------------*/
+ function tab_menu(menu){
+    var url="";
+    isItSearching = 0;      //검색중이 아님으로 변경
+    $("#search").val('');
+    switch(menu){
+        case 'notice':     //공지사항 탭
+            url="/notice_list"
+            $('#tab_notice').addClass("active");
+            $('#tab_faq').removeClass("active");
+            $('#tab_list').removeClass("active");
+            $('#tab_software').removeClass("active");
+            break;
+        case 'faq':     //FAQ 탭
+            url="/faq_list"
+            $('#tab_notice').removeClass("active");
+            $('#tab_faq').addClass("active");
+            $('#tab_list').removeClass("active");
+            $('#tab_software').removeClass("active");
+            break;
+        case 'list':     //요청사항 탭
+            url="/list"
+            $('#tab_notice').removeClass("active");
+            $('#tab_faq').removeClass("active");
+            $('#tab_list').addClass("active");
+            $('#tab_software').removeClass("active");
+            $("#stat_flag").val('00');      //다시 클릭 시 진행상황 전체보기로 초기화
+            break;
+        case 'software':    //자료실 탭
+            url="/software_list"
+            $('#tab_notice').removeClass("active");
+            $('#tab_faq').removeClass("active");
+            $('#tab_list').removeClass("active");
+            $('#tab_software').addClass("active");
+            break;
+    }
+
+    data={};
+    ajaxJsonCallSync(url, data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");     //클릭한 리스트 화면 출력
+
+ }
+
+ /*----------------------+
+ |  08. 상태 탭 클릭시 처리  |
+ +-----------------------*/
+ function tab_stat(stat){
+    var stat_flag="";
+    isItSearching = 0;      //검색중이 아님으로 변경
+    $("#search").val('');
+
+    $('#tab_notice').removeClass("active");
+    $('#tab_faq').removeClass("active");
+    $('#tab_list').addClass("active");
+    $('#tab_software').removeClass("active");
+    switch(stat){
+        case 'new':
+            stat_flag = '01';
+            break;
+        case 'reciept':
+            stat_flag = '02';
+            break;
+        case 'progress':
+            stat_flag = '03';
+            break;
+        case 'complete':
+            stat_flag = '04';
+            break;
+    }
+    $("#stat_flag").val(stat_flag);
+    data={'stat_flag' : stat_flag};
+    ajaxJsonCallSync("/findByStat", data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");
+ }
+
+ /*----------------------+
+ |  09. 검색 버튼 클릭시 처리  |
+ +-----------------------*/
+ function search(){
+    isItSearching = 1;          //검색중으로 값 변경
+    var select_code =  $("#select_menu option:selected").val();	    //선택한 값의 code 가져오기
+    var search_input = $("#search").val();
+    var start_day = $("#start_day").val();
+    var end_day = $("#end_day").val();
+    var data={'search':search_input,
+              'start_day':start_day,
+              'end_day':end_day};
+
+    //시작일이나 마지막일중 하나만 입력돼있을 경우
+    if((start_day != "" && end_day == "") || (start_day == "" && end_day !="")){
+        alert("시작일이나 마지막일을 입력해주세요. ");
+    }
+    //마지막일이 시작일보다 앞선 경우
+    else if(start_day > end_day){
+        alert("마지막일은 시작일보다 빠를 수 없습니다.");
+    }
+    else{
+        switch(select_code){
+            case '공지사항':
+                $('#tab_notice').addClass("active");
+                $('#tab_faq').removeClass("active");
+                $('#tab_list').removeClass("active");
+                $('#tab_software').removeClass("active");
+                ajaxJsonCallSync("/notice_list",data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");
+            break;
+            case 'FAQ':
+                $('#tab_notice').removeClass("active");
+                $('#tab_faq').addClass("active");
+                $('#tab_list').removeClass("active");
+                $('#tab_software').removeClass("active");
+                ajaxJsonCallSync("/faq_list",data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");
+            break;
+            case '문의 게시판':
+                $('#tab_notice').removeClass("active");
+                $('#tab_faq').removeClass("active");
+                $('#tab_list').addClass("active");
+                $('#tab_software').removeClass("active");
+                ajaxJsonCallSync("/list",data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");
+            break;
+            case '자료실':
+                $('#tab_notice').removeClass("active");
+                $('#tab_faq').removeClass("active");
+                $('#tab_list').removeClass("active");
+                $('#tab_software').addClass("active");
+                ajaxJsonCallSync("/software_list",data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");
+            break;
+        }
+    }
+ }
+
+/*-----------------------------------+
+|  10. 뒤로가기 이미지 버튼 클릭 時 처리 할 사항  |
++------------------------------------*/
+function back(menu){
+    data={};
+
+    switch(menu)
+    {
+    case 'notice':
+        ajaxJsonCallSync("/notice_list", data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");     //공지사항 목록으로 이동
+    break;
+    case 'faq':
+        ajaxJsonCallSync("/faq_list", data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");      //FAQ 목록으로 이동
+    break;
+    case 'list':
+        ajaxJsonCallSync("/list", data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");          //문의 게시판 목록으로 이동
+    break;
+    case 'software':
+        ajaxJsonCallSync("/software_list", data, listSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");     //자료실 게시판으로 이동
+    break;
+    default:
+        location.href="/main";      //첫 화면으로 이동
+    break;
+
+    }
+}
 </script>
 
-<!-- 진행과정 안내 팝업 -->
-<div id="howto_popup" class="white_content">
-	<%@ include file="/WEB-INF/views/main/howToUse.jsp" %>
-	<a href="javascript: week_close();" style="text-decoration: none;">일주일 동안 열지 않음</a>
+
+<body>
+<sec:authentication var="principal" property="principal"/>
+<div id="myModal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
+    <!-- 진행과정 안내 팝업 -->
+    <div id="howto_popup" class="modal" tabindex="-1" role="dialog">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <h5 class="modal-title">장애 접수 처리 과정</h5>
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	            <span aria-hidden="true">&times;</span>
+	          </button>
+	        </div>
+	        <div class="modal-body">
+	          <%@ include file="/WEB-INF/views/main/howToUse.jsp" %>
+	        </div>
+	        <div class="modal-footer">
+	          <a href="javascript: week_close();">[일주일 동안 열지 않음]</a>
+	        </div>
+	      </div>
+	    </div>
+    </div>
+	<!--header-->
+	<div class="wrap main_bg">
+		<div class="head_box">
 
-<!-- 검색창 -->
-<div class="container" style="width: 100%; margin-top: 100px;">
-
-	<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-		<div class="mdl-card__title" style="width: 100%;">
-			<input id="search_box" type="text" placeholder="질문을 입력하세요." style="border: 0; width:99%; font-size: 18px;" onkeyup="javascript:meEnter();">
-			<img height="50" class="main-image" src="${contextPath}/resources/images/search.png" onclick="search();" style="cursor: pointer;">
+			<div class="bottom">
+				<div class="datum_point">
+					<h1><img src="${contextPath}/resources/images/SM_logo_white.png" onclick="back();" ></h1>
+				</div>
+			</div>
 		</div>
+		<div class="content_box">
+    		<div class="datum_point">
+				<div class="content1">
+					<div class="left">
+						<div class="user_info">
+						    <sec:authorize access="hasAuthority('001')">
+							    <i class="fas fa-key"></i>
+							</sec:authorize>
+						    <sec:authorize access="hasAuthority('002')">
+							    <i class="far fa-user"></i>
+							</sec:authorize>
+							<ul>
+							    <sec:authorize access="hasAuthority('001')">
+							        <li>관리자</li>
+							    </sec:authorize>
+								<li>${accountDetail.comm_pany}</li>
+								<li>${accountDetail.dept_ment}</li>
+								<li>${accountDetail.real_name}<span>&nbsp;${accountDetail.posi_tion}</span></li>
+							</ul>
+							<form action="/logout" method="post">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+							    <button class="btn">로그아웃</button>
+							</form>
+                            <button class="btn" id="howto_btn">이용방법</button>
+                            <sec:authorize access="hasAuthority('001')">
+                                <button class="btn" id="popup_admin_btn">카테고리 관리</button>
+                            </sec:authorize>
+						</div>
+					</div>
+					<div class="right">
+					    <!--탭 메뉴-->
+						<div class="tab">
+							<ul>
+								<li id="tab_notice" class="active" onclick="tab_menu('notice')"><a>공지사항</a></li>
+								<li id="tab_faq" onclick="tab_menu('faq')"><a>FAQ</a></li>
+								<li id="tab_list" onclick="tab_menu('list')"><a>문의 게시판</a></li>
+								<li id="tab_software" onclick="tab_menu('software')"><a>자료실</a></li>
+							</ul>
+						</div>
+						<!--dashboard-->
+						<div class="count_box">
+							<ul>
+								<li>
+								    <label id="new_list" onclick="tab_stat('new')">
+									    <p>신규</p>
+									    <i class="far fa-bell"></i>
+									    <span>${statInfo.stat_neww}</span>
+									</label>
+								</li>
+								<li>
+								    <label id="reciept_list" onclick="tab_stat('reciept')">
+									    <p>접수</p>
+									    <i class="far fa-comment-dots"></i>
+									    <span>${statInfo.stat_chek}</span>
+									</label>
+								</li>
+								<li>
+								    <label id="progress_list" onclick="tab_stat('progress')">
+                                        <p>진행중</p>
+                                        <i class="fas fa-hourglass-half"></i>
+                                        <span>${statInfo.stat_load}</span>
+                                    </label>
+							    </li>
+								<li>
+								    <label id="complete_list" onclick="tab_stat('complete')">
+                                        <p>요청완료</p>
+                                        <i class="far fa-check-circle"></i>
+                                        <span>${statInfo.stat_comp}</span>
+									</label>
+								</li>
+							</ul>
+						</div>
+						<!--검색 부분-->
+						<div class="search_box">
+							<ul>
+								<li class="day_box">
+									<div class="input_box">
+										<input id="start_day" type="text" readonly>
+									</div>
+									<span class="wave">~</span>
+									<div class="input_box">
+										<input id="end_day" type="text" readonly>
+									</div>
+								</li>
+								<li class="class_box">
+									<select id="select_menu">
+										<option>공지사항</option>
+										<option>FAQ</option>
+										<option>문의 게시판</option>
+										<option>자료실</option>
+									</select>
+								</li>
+								<li class="input_box_search">
+									<input id="search" type="text" placeholder="검색어를 입력해주세요">
+									<a href="javascript:search();"><i class="fas fa-search"></i></a>
+								</li>
+							</ul>
+					   </div>
+					   <!--게시판 목록-->
+					   <div id="box" class="box">
+					   </div>
+					</div>
+				</div>
+			</div>
 	</div>
-</div>
-
-<!-- 공지사항 -->
-<div class="container" style="width: 60%; display: inline-block">
-
-	<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-
-		  <div class="mdl-card__title">
-		  	<img class="main-image" src="${contextPath}/resources/images/megaphone.png">
-		    <h2 class="mdl-card__title-text" style="display: inline-block;">공지사항</h2>
-		  </div>
-		  <div class="mdl-card__supporting-text" style="width: 100%">
-		  	<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" >
-				<thead>
-					<tr align="center">
-						<th class="mdl-data-table__cell--non-numeric" width="40%">제목</th>
-						<th class="mdl-data-table__cell--non-numeric" width="10%">이름</th>
-						<th class="mdl-data-table__cell--non-numeric" width="10%">입력일자</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="item" items="${list}">
-						<tr align="center">
-							<td class="mdl-data-table__cell--non-numeric"><a
-								class="boardlist_title" style="color: #223055;"
-								href='<c:url value="/notice_detail/${item.idxx_numb}"/>'>${item.titl_name}</a></td>
-							<td class="mdl-data-table__cell--non-numeric">${item.user_name}</td>
-							<td class="mdl-data-table__cell--non-numeric"><fmt:formatDate
-									pattern="yyyy-MM-dd" value="${item.crea_date}" /></td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-		  </div>
-		  <div class="mdl-card__actions mdl-card--border" >
-		    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" style="float:right; text-decoration:none;" href="/notice_list">
-		      MORE
-		    </a>
-		  </div>
-
+    <input id="stat_flag" type="hidden" value="00">
+    <%@ include file="/WEB-INF/views/include/footer.jsp" %>
 	</div>
-</div>
+</body>
+</html>
 
-<!-- FAQ -->
-<div class="container" style="width: 40%; display: inline-block; float: right;">
-
-	<div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
-
-		  <div class="mdl-card__title">
-		  	<img class="main-image" src="${contextPath}/resources/images/faq.png">
-		    <h2 class="mdl-card__title-text" style="display: inline-block;">자주묻는질문</h2>
-		  </div>
-		  <div class="mdl-card__supporting-text" style="width: 100%">
-		  	<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" >
-				<thead>
-					<tr align="center">
-						<th class="mdl-data-table__cell--non-numeric" width="30%">제목</th>
-						<th class="mdl-data-table__cell--non-numeric" width="10%">입력일자</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="item" items="${faq_list}">
-						<tr align="center">
-							<td class="mdl-data-table__cell--non-numeric"><a
-								class="boardlist_title" style="color: #223055;"
-								href='<c:url value="/faq_detail/${item.idxx_numb}"/>'>${item.titl_name}</a></td>
-							<td class="mdl-data-table__cell--non-numeric"><fmt:formatDate
-									pattern="yyyy-MM-dd" value="${item.crea_date}" /></td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-		  </div>
-		  <div class="mdl-card__actions mdl-card--border" >
-		    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" style="float:right; text-decoration:none;" href="/faq_list">
-		      MORE
-		    </a>
-		  </div>
-
-	</div>
-</div>
-
-<%@ include file="/WEB-INF/views/include/footer.jsp" %>       
 </body>
 
 </html>

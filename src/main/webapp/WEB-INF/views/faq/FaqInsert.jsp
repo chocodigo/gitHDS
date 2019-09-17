@@ -1,13 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ include file="/WEB-INF/views/include/header.jsp" %>
-<%@ include file="../common/bootstrap.jsp" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
-<html>
 <head>
 <meta charset="UTF-8">
 <title>faq insert</title>
-<script type="text/javascript" src="/resources/vendor/jquery/jquery-1.9.1.min.js"></script>
 </head>
 <body>
 <script type="text/javascript">
@@ -58,62 +55,48 @@
 		} else if (cont_ents == "") {
 			alert("내용을 입력하세요");
 			$("#cont_ents").focus();
-		} else {
-			$("#insert_form").submit();
-		}
+		} else if(confirm("게시 글을 등록하시겠습니까?")){
+            $("#insert_form").submit();
+        }else{}
 	}
 </script>
-<div class="container" style="width: 100%; margin-top: 90px;">
-	<div class="mdl-card__title" style="height:60px;">
-		<img class="main-image" src="${contextPath}/resources/images/faq.png" >
-		<h2 class="mdl-card__title-text" style="display: inline-block;">FAQ 작성</h2>
-	</div>
-	<div class="mdl-card__supporting-text" style="width: 100%; font-size: 12px;">
-		<form id="insert_form" class="form-group" action="/faqInsertProc" method="post" enctype="multipart/form-data">
-			
-			<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
-				<thead>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%">제목</th>
-						<td class="mdl-data-table__cell--non-numeric" width="90%"><input type="text" class="form-control" id="titl_name" name="titl_name"></td>
-	
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%">작성자</th>
-						<td class="mdl-data-table__cell--non-numeric"><sec:authentication property="principal.username"/></td>
-		
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">내용</th>
-						<td class="mdl-data-table__cell--non-numeric"><textarea class="form-control" id="cont_ents" name="cont_ents" rows="10" style="resize: none;"></textarea></td>
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">파일 첨부</th>
-						<td class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">
-							<div class="file_input">
-								
-								<input type="text" readonly="readonly" title="File Route" id="files">
-								<label>
-									파일첨부
-									<input type="file" name="files "onchange="javascript:document.getElementById('files').value=this.value">
-								</label>
-							</div>
-						</td>
-					</tr>
-				</thead>
-			</table>
-	
-			
-		
-			
-			<input type="hidden" name="${_csrf.parameterName}" value = "${_csrf.token}"/>
-			
-		</form>
-		<div class="detail_btn_group">
-			<button type="button" class="mdl-button mdl-js-button" onclick="insert()">작성</button>
-			<button type="button" class="mdl-button mdl-js-button" onclick="location.href='/faq_list'">목록</button>
-		</div>
-	</div>
+
+<div class="table_box">
+    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('faq');">
+    <form id="insert_form" action="/faqInsertProc" method="post" enctype="multipart/form-data">
+        <table>
+            <colgroup>
+                <col width="15%">
+                <col width="85%" >
+            </colgroup>
+
+            <tbody>
+                <tr>
+                    <td>제목</td>
+                    <td><input type="text" class="form-control" id="titl_name" name="titl_name"></td>
+                </tr>
+                <tr>
+                    <td>작성자</td>
+                    <td>${real_name}</td>
+                </tr>
+                <tr>
+                    <td>내용</td>
+                    <td><textarea class="form-control" id="cont_ents" name="cont_ents" rows="10"></textarea></td>
+                </tr>
+                <tr>
+                    <td>첨부파일</td>
+                    <td><input type="file" name="files "onchange="javascript:document.getElementById('files').value=this.value"></td>
+                </tr>
+                <input type="hidden" name="${_csrf.parameterName}" value = "${_csrf.token}"/>
+
+            </tbody>
+        </table>
+    </form>
+    <div class="insert_btn">
+        <button type="button" class="btn" onclick="insert();">등록</button>
+    </div>
+    <div class="clear_fix"></div>
 </div>
+
 </body>
 </html>

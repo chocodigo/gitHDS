@@ -37,7 +37,8 @@ var ajaxJsonCallSync = function(url, param, successCallback, csrf_headerName, cs
 
     console.log( "data = "+ data);
     console.log( "url = "+ url);
-   
+    console.log( "csrf_headerName = "+ csrf_headerName);
+    console.log( "csrf_token = "+ csrf_token);
 
     $.ajax({
         type : 'POST'
@@ -45,10 +46,10 @@ var ajaxJsonCallSync = function(url, param, successCallback, csrf_headerName, cs
         ,data : data
         ,async: false
         ,beforeSend : function(xhr){
-			xhr.setRequestHeader(csrf_headerName, csrf_token);
+            if(csrf_headerName != null && csrf_token != null)
+			    xhr.setRequestHeader(csrf_headerName, csrf_token);
 		}
         ,success : function(data) {
-    		console.log("-----" + data);
             successCallback(data);
         }
         ,error : function(xhr, status, error) {

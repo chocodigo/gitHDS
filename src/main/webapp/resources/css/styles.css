@@ -1,22 +1,58 @@
 body{
 	margin : 0px;
-	
-}
 
+}
+input:focus{
+    outline:none;
+}
 a img{
 	border: 0px;
 }
 table {width: 100%; border: 0; border-spacing: 0; table-layout: fixed; word-break:break-all;border: 1.5px solid #223055;}
 table tr td, table tr th {padding:0; word-break: break-all; word-wrap: break-word;margin-bottom: 10px;}
 
+/*ë„¤ë¹„ê²Œì´ì…˜ ë°”*/
+/*í—¤ë” ë§¨ ìœ„ ê³„ì •ì •ë³´ì™€ ë¡œê·¸ì•„ì›ƒ ë²„íŠ¼*/
+.hello_account_div{
+    color: black;
+    padding-right: 40px;
+    height: 20px;
+    background-color: #E8C1DF;
+    display: inline-block;
+    width: 100%;
+}
+.hello_account{
+    vertical-align: middle;
+    width: 1140px;
+    margin: auto;
+
+
+}
+
+.hello_title{
+    font-size: 15px; text-align: right; color: white; display: inline-block;
+}
+
+.hello_account_img{
+    width:15px; margin-top: -3px; margin-right: 5px;
+}
+
+.mdl-layout__header-row{padding:0;}
 .hds-header .mdl-menu__container {
   z-index: 50;
   margin: 0 !important;
+
 }
 
 .hds-logo-image {
   height: 28px;
   width: 140px;
+  cursor: pointer;
+}
+
+.hds-nav-bar{
+    width: 1140px;
+    margin: auto;
 }
 
 .hds-header {
@@ -188,7 +224,7 @@ table tr td, table tr th {padding:0; word-break: break-all; word-wrap: break-wor
 	color: white;
 }
 
-/*¸¶ÀÌÆäÀÌÁö ¿ø ±×·¡ÇÁ*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½*/
 .progress-pie-chart {
 width:200px;
 height: 200px;
@@ -295,37 +331,6 @@ margin: auto 0;
   transition:800ms ease all;
 }
 
-.file_input label {
-    position:relative;
-    cursor:pointer;
-    display:inline-block;
-    vertical-align:middle;
-    overflow:hidden;
-    width:100px;
-    height:30px;
-    background:#B0B7C0;
-    color:#fff;
-    text-align:center;
-    line-height:30px;
-}
-.file_input label input {
-    position:absolute;
-    width:0;
-    height:0;
-    overflow:hidden;
-}
-.file_input input[type=text] {
-    vertical-align:middle;
-    display:inline-block;
-    width: 90%;
-    height:28px;
-    line-height:28px;
-    font-size:11px;
-    padding:0;
-    border:0;
-    border:1px solid #B0B7C0;
-}
-
 .file_img{
 	width: 25%;
 	height: auto;
@@ -336,7 +341,7 @@ margin: auto 0;
 	height: 100%;
 }
 
-/*»ç¿ë¹æ¹ı div*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ div*/
 .how_to_use_div{
 	background-size: cover;
 	background-position: center top;
@@ -399,7 +404,7 @@ margin: auto 0;
 	color: #9b9b9b;
 }
 
-/* ÁøÇà»óÈ² ¼öÁ¤ modal*/
+/* ï¿½ï¿½ï¿½ï¿½ï¿½È² ï¿½ï¿½ï¿½ï¿½ modal*/
 figure.snip1141 {
   font-family: 'Raleway', Arial, sans-serif;
   overflow: hidden;
@@ -447,7 +452,7 @@ figure.snip1141.hover img {
   transform: scale(1.1);
 }
 
-/*¸ŞÀÎÈ­¸é »ç¿ë¹æ¹ı ÆË¾÷Ã¢*/
+/*ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¾ï¿½Ã¢*/
 .white_content {
 	display: block;
 	position: absolute;
@@ -478,7 +483,7 @@ figure.snip1141.hover img {
 	padding : 30px;
 }
 
-/*¿¡·¯ÆäÀÌÁö*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 .error{
 	text-align: center;
 	margin: 0;
@@ -493,7 +498,7 @@ figure.snip1141.hover img {
 	height:auto;
 }
 
-/*°ü¸®ÀÚ ¹öÆ°*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°*/
 .admin_btn{
 	background-color: #FFE1E9; 
 	border-radius : 5px;  

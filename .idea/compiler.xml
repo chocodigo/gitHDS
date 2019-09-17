@@ -6,16 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="HelloWorld" />
+        <module name="smHDS" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="HelloWorld" target="1.8" />
+      <module name="smHDS" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="HelloWorld" options="-parameters" />
+      <module name="smHDS" options="-parameters" />
     </option>
   </component>
 </project>

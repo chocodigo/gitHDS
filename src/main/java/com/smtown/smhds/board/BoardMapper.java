@@ -1,11 +1,13 @@
 package com.smtown.smhds.board;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
 
 import com.smtown.smhds.account.Account;
-import com.smtown.smhds.util.PrintPage;
 import com.smtown.smhds.util.FileVO;
-import org.springframework.stereotype.Repository;
+import com.smtown.smhds.util.PrintPage;
 
 /**
  * <pre>
@@ -28,39 +30,44 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface BoardMapper {
-    public int boardCompareBirth(Account account) throws Exception;	//생일인증
+	
+	public int boardCompareBirth(Account account) throws Exception;	//생일인증
 
-    public int boardResetPassword(Account account) throws Exception; //비밀번호 재설정
+	public int boardResetPassword(Account account) throws Exception; //비밀번호 재설정
 
-    public int boardCount(PrintPage printPage) throws Exception;	//게시글 갯수
+	public int isPasswordNull(String user_name) throws Exception;	//비밀번호 null 확인
 
-    public List<BoardVO> boardList(PrintPage printPage) throws Exception;	//게시글 목록
+	public StatInfo boardStatInfo() throws Exception;	//진행상황 정보
 
-    public List<BoardVO> boardCateList() throws Exception;	//카테고리 이름
+	public int boardCount(PrintPage printPage) throws Exception;	//게시글 갯수
 
-    public List<String> boardSuggestion(PrintPage printPage) throws Exception;	//자동완성 기능
+	public List<BoardVO> boardList(PrintPage printPage) throws Exception;	//게시글 목록
 
-    public BoardVO boardDetail(String idxx_numb) throws Exception;	//게시글 상세
+	public List<String> boardSuggestion(Map<String,String> SearchMap) throws Exception;	//자동완성 기능
 
-    public int boardInsert(BoardVO board) throws Exception;	//게시글 작성
+	public BoardVO boardDetail(String idxx_numb) throws Exception;	//게시글 상세
 
-    public String boardSelectIdxx() throws Exception; //idxx_numb 생성
+	public int boardHasReply(String idxx_numb) throws Exception;	//게시글 답변 달렸는지 확인
 
-    public int fileInsert(FileVO file) throws Exception;	//파일 업로드
+	public int boardInsert(BoardVO board) throws Exception;	//게시글 작성
 
-    public FileVO fileDetail(String idxx_numb) throws Exception;	//파일 상세
+	public String boardSelectIdxx() throws Exception; //idxx_numb 생성
 
-    public int boardUpdate(BoardVO board) throws Exception;	//게시글 수정
+	public int fileInsert(FileVO file) throws Exception;	//파일 업로드
 
-    public int boardUpdateStat(BoardVO board) throws Exception; //게시글 상태 수정
+	public FileVO fileDetail(String idxx_numb) throws Exception;	//파일 상세
 
-    public int boardDelete(String idxx_numb) throws Exception;	//게시글 삭제
+	public int boardUpdate(BoardVO board) throws Exception;	//게시글 수정
 
-    public int fileDelete(String idxx_numb) throws Exception;	//파일 삭제
+	public int boardUpdateStat(BoardVO board) throws Exception; //게시글 상태 수정
 
-    public BoardVO boardCurrent(String user_name) throws Exception;	//최신글 정보 조회
+	public String selectCodeName(String stat_flag) throws Exception;	//게시글 상태 이름
 
-    public List<BoardVO> boardListByUser(PrintPage printPage, String user_name) throws Exception;	//특정 사용자가 쓴 게시글 조회
+	public int boardDelete(String idxx_numb) throws Exception;	//게시글 삭제
 
-    public int boardCountByUser(String user_name) throws Exception;	//특정 사용자가 쓴 게시글 갯수
+	public int fileDelete(String idxx_numb) throws Exception;	//파일 삭제
+
+	public List<BoardVO> boardFindStat(PrintPage printPage) throws Exception;	//상태에 따른 조회
+
+	public String getAdminEmail(String cate_gory) throws Exception;		//카테고리 관리자 이메일 조회
 }

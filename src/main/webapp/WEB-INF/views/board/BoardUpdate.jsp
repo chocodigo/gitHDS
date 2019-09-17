@@ -1,14 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ include file="/WEB-INF/views/include/header.jsp" %>
-<%@ include file="../common/bootstrap.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
 <title>Board Update</title>
 <meta charset="UTF-8">
-<script type="text/javascript" src="/resources/vendor/jquery/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/resources/script/common.js"></script>
 </head>
 <body>
 <script type="text/javascript">
@@ -61,7 +59,7 @@
  /*-----------------------------------+
  |  02. 수정 버튼 클릭 시 진행되는 함수|
  +------------------------------------*/
- function update(){
+ function list_update(){
 	  var titl_name = $("#titl_name").val();	//글 제목
 	  var cont_ents = $("#cont_ents").val();	//글 내용
 	  var select_code =  $("#select_category option:selected").val();	//선택한 값의 code 가져오기
@@ -74,106 +72,123 @@
 		  $("#cont_ents").focus();
 	  }else if (select_code =="cate_all"){
 		  alert("카테고리를 선택하세요.");
-	  }else{
-		  $("#insert_form").submit();
+	  }else if(confirm("게시 글을 수정하시겠습니까?")){
+		  
+		  $("#update_form").submit();
+	  }
+	  else{
 	  }
  }
 /*-----------------------------------+
-|  03.셀렉트박스 변경 시 내용 placeholder 변경 처리  |
+|  03.셀렉트박스 변경 시 카테고리 값 처리  |
 +------------------------------------*/
 function changePlaceholder(){
 	 var select_code =  $("#select_category option:selected").val();	//선택한 값의 code 가져오기
 	 
 	 switch(select_code){
-	 case '01':
-		 $("#cont_ents").attr("placeholder","PC 문제 셀프체크");
-		 $("#cate_gory").val(select_code);
-		 break;
-	 case '02':
-		 $("#cont_ents").attr("placeholder","Network 문제 셀프체크");
-		 $("#cate_gory").val(select_code);
-		 break;
-	 case '03':
-		 $("#cont_ents").attr("placeholder","기타 요청사항 문제 셀프체크");
-		 $("#cate_gory").val(select_code);
-		 break;
+        case '01':
+             $("#cate_gory").val(select_code);
+             break;
+         case '02':
+             $("#cate_gory").val(select_code);
+             break;
+         case '03':
+             $("#cate_gory").val(select_code);
+             break;
+         case '04':
+            $("#cate_gory").val(select_code);
+             break;
+         case '05':
+             $("#cate_gory").val(select_code);
+             break;
+         case '06':
+            $("#cate_gory").val(select_code);
+            break;
+         case '07':
+            $("#cate_gory").val(select_code);
+            break;
 	 }
+}
+
+/*-----------------------------------+
+|  04.첨부파일 삭제  버튼 클릭시|
++------------------------------------*/
+function fileDelete(){
+	if(confirm("파일을 삭제하시겠습니까? 수정버튼을 클릭하지 않아도 파일이 삭제가 됩니다.")){
+		var idxx_numb = '${detail.idxx_numb}';
+		data={'idxx_numb' : idxx_numb};
+		ajaxJsonCallSync("/fileDelete", data, deleteFileSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");	//삭제하기 위한 통신
+	}else{
+		
+	}
+	
+}
+
+/*-----------------------------------+
+|  05.파일 삭제 성공 시 콜백 함수|
++------------------------------------*/
+function deleteFileSuccessCallBack(data){
+	$("#file_info").css("display","none");
 }
 </script>
 
 <sec:authentication var="principal" property="principal"/>
 
-<div class="container" style="width: 100%; margin-top: 90px;">
-	<div class="mdl-card__title" style="height:60px;">
-			<img class="main-image" style="margin-top: -20px;"
-				src="${contextPath}/resources/images/question.png" />
-				<h2 class="mdl-card__title-text" style="display: inline-block;">요청사항</h2>
-		</div>
-	<div class="mdl-card__supporting-text" style="width: 100%; font-size: 12px;">
-		<form id="form-update" class="form-group" action="/updateProc" method="post" enctype="multipart/form-data">
-			
-			<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="width: 100%;">
-				<thead>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%">제목</th>
-						<td class="mdl-data-table__cell--non-numeric" width="90%">
-							<input type="text" class="form-control" id="titl_name" name="titl_name" value="${detail.titl_name}">
-						</td>
-	
-					</tr>
-					<tr>
-						<th class="mdl-data-table__cell--non-numeric" width="10%">문제상황</th>
-						<td class="mdl-data-table__cell--non-numeric" width="90%">
-							<select id="select_category" style="border:0" onchange="changePlaceholder()">
-								<option value="cate_all">카테고리</option>
-								<c:forEach var="item" items="${category_list }">
-									<option value="${item.cate_gory }">${item.cate_name }</option>
-								</c:forEach>
-							</select>
-						</td>
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%">작성자</th>
-						<td class="mdl-data-table__cell--non-numeric">${detail.user_name }</td>
-		
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">내용</th>
-						<td class="mdl-data-table__cell--non-numeric">
-							<textarea class="form-control" id="cont_ents" name="cont_ents" rows="10" style="resize: none;">${detail.cont_ents}</textarea>
-						</td>
-					</tr>
-					<tr align = "center">
-						<th class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">파일 첨부</th>
-						<td class="mdl-data-table__cell--non-numeric" width="10%" style="vertical-align : middle;">
-							<div class="file_input">
-								<input type="text" readonly="readonly" title="File Route" id="files">
-								<label>
-									파일첨부
-									<input type="file" name="files "onchange="javascript:document.getElementById('files').value=this.value" value="${files.file_orig}">
-								</label>
-							</div>
-						</td>
-					</tr>
-				</thead>
-			</table>
-	
-			
-			
-			
-			<input type="hidden" name="${_csrf.parameterName}" value = "${_csrf.token}"/>
-			<input type="hidden" name="idxx_numb" value="${detail.idxx_numb}"> 
-			<input type="hidden" name="user_name" id="user_name" value="${principal.username }">
-			<input type="hidden" name="data_name" id="data_name" value="${detail.user_name}">
-		</form>
-		
-		<div class="detail_btn_group">
-			<button type="submit" class="mdl-button mdl-js-button" onclick="update()">수정</button>
-			<button type="button" class="mdl-button mdl-js-button" onclick="location.href='/list/${cate_gory}'">목록</button>
-		</div>
-	</div>
-</div>
+<div class="table_box">
+    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('list');">
+    <form id="update_form" action="/updateProc" method="post" enctype="multipart/form-data">
+        <table>
+            <colgroup>
+                <col width="15%">
+                <col width="85%" >
+            </colgroup>
 
-<%@ include file="/WEB-INF/views/include/footer.jsp" %>   
+            <tbody>
+                <tr>
+                    <td>제목</td>
+                    <td><input type="text" class="form-control" id="titl_name" name="titl_name" value="${detail.titl_name}"></td>
+                </tr>
+                <tr>
+                    <td>작성자</td>
+                    <td>${detail.crea_user}</td>
+                </tr>
+                <tr>
+                    <td>문제상황</td>
+                    <td>
+						<select id="select_category" style="border:0" onchange="changePlaceholder()">
+							<option value="cate_all">카테고리</option>
+							<c:forEach var="item" items="${category_list }">
+								<option value="${item.comm_code }">${item.code_name }</option>
+							</c:forEach>
+						</select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>내용</td>
+                    <td><textarea class="form-control" id="cont_ents" name="cont_ents" rows="10">${detail.cont_ents}</textarea></td>
+                </tr>
+                    <c:if test="${files ne null}">
+                        <tr id="file_info">
+                            <td>첨부한 파일</th>
+                            <td>
+                            ${files.file_orig }  <a onclick="javascript:fileDelete();" style="cursor: pointer;">삭제</a>
+                            </td>
+                        </tr>
+                    </c:if>
+                <tr>
+                    <td>첨부파일</td>
+                    <td><input type="file" name="files "onchange="javascript:document.getElementById('files').value=this.value"></td>
+                </tr>
+                <input type="hidden" name="${_csrf.parameterName}" value = "${_csrf.token}"/>
+                <input type="hidden" name="idxx_numb" value = "${detail.idxx_numb}"/>
+                <input type="hidden" id="cate_gory"name="cate_gory"/>
+            </tbody>
+        </table>
+    </form>
+    <div class="insert_btn">
+        <button type="button" class="btn" onclick="list_update();">수정</button>
+    </div>
+    <div class="clear_fix"></div>
+</div>
 </body>
 </html>

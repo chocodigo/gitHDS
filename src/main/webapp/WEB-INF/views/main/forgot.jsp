@@ -9,12 +9,21 @@
 	<title>Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="${contextPath}/resources/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="${contextPath}/resources/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
-	<link rel="stylesheet" type="text/css" href="${contextPath}/resources/css/login_util.css">
-	<link rel="stylesheet" type="text/css" href="${contextPath}/resources/css/login.css">
-	<script type="text/javascript" src="/resources/vendor/jquery/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src="/resources/script/common.js"></script>
+	<script type="text/javascript" src="/resources/script/jquery-3.4.1.js"></script>
+   	<script type="text/javascript" src="/resources/script/common.js"></script>
+    <!-- bootstrap-4.3.1-dist -->
+    <script type="text/javascript" src="/resources/bootstrap-4.3.1-dist/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="/resources/bootstrap-4.3.1-dist/css/bootstrap.css">
+    <!-- swiper-4.5.0 -->
+    <script type="text/javascript" src="/resources/swiper-4.5.0/dist/js/swiper.js"></script>
+    <link rel="stylesheet" href="/resources/swiper-4.5.0/dist/css/swiper.css">
+    <!-- core CSS -->
+    <link rel="stylesheet" href="/resources/css/commons.css">
+    <link rel="stylesheet" href="/resources/css/font.css">
+    <!-- User Define CSS -->
+    <link rel="stylesheet" href="/resources/css/user_define.css">
+    <!-- Device Width CSS -->
+    <link rel="stylesheet" href="/resources/css/device-width.css">
 </head>
 <body>
 <script type="text/javascript">
@@ -61,12 +70,12 @@
 		필수 입력사항 처리
 		 */
 		var USER_NAME = $("#USER_NAME").val();
-		var BIRT_HDAY = $("#BIRT_HDAY").val();
+		var PHON_ENUM = $("#PHON_ENUM").val();
 
 		/* 
 		입력하지 않았을 때 처리
 		 */
-		if (USER_NAME == "" || BIRT_HDAY == "") {
+		if (USER_NAME == "" || PHON_ENUM == "") {
 			alert('아이디 또는 생년원일을 입력하지 않으셨습니다.');
 			$("#USER_NAME").focus();
 			return false;
@@ -76,7 +85,7 @@
 		전송할 데이터(ID, 생일)
 		 */
 		var data = {"user_name" : USER_NAME,
-					"birt_hday" : BIRT_HDAY};
+					"phon_enum" : PHON_ENUM};
 		
 		ajaxJsonCallSync("/forgotProc", data, birthSuccessCallBack);	//ajax sync 통신
 	}
@@ -143,58 +152,42 @@
 	 location.href="/login";
  }
 </script>
-	<div class="limiter">
-		<div class="container-login100">
-			<div class="wrap-login100 p-t-50 p-b-90">
-				<span class="login100-form-title p-b-51"> <img
-					class="hds-logo-image"
-					src="${contextPath}/resources/images/SM_logo.png">
-				</span>
-				
-				<!-- ID 입력칸 -->
-				<div class="wrap-input100 validate-input m-b-16">
-					<input class="input100" type="text" id="USER_NAME" name="USER_NAME"
-						placeholder="ID를 입력해주세요" >
-					<span class="focus-input100"></span>
-				</div>
+    <div class="wrap">
+        <div class="login_box">
+        	<div class="img_box">
+        		<img src="${contextPath}/resources/images/SM_logo.png">
+        	</div>
+        	<div class="input_box">
+                <input class="" type="text" id="USER_NAME" name="USER_NAME" placeholder="ID">
+                <span class=""><i></i></span>
+            </div>
+            <div class="input_box">
+                <input class="" type="text" id="PHON_ENUM" name="PHON_ENUM" placeholder="생년월일 여섯자리">
+                <span class=""><i></i></span>
+            </div>
+            <!-- 비밀번호 변경 칸 -->
+            <div id="div_password" class="input_box" style="display: none;">
+                <input class="" type="password" id="PASS_WORD" name="PASS_WORD" placeholder="휸대폰번호">
+            	<span class=""></span>
+            </div>
 
-				<!-- 생년월일 입력칸 -->
-				<div class="wrap-input100 validate-input m-b-16">
-					<input class="input100" type="text" id="BIRT_HDAY" name="BIRT_HDAY"
-						placeholder="생년월일 여섯자리를 입력해주세요">
-					<span class="focus-input100"></span>
-				</div>
-				
-				<!-- 비밀번호 변경 칸 -->
-				<div id="div_password" class="wrap-input100 validate-input m-b-16" style="display: none;">
-					<input class="input100" type="password"" id="PASS_WORD" name="PASS_WORD"
-						placeholder="변경할 비밀번호">
-					<span class="focus-input100"></span>
-				</div>
-				
-				<!-- 비밀번호 확인 칸 -->
-				<div id="div_confirm" class="wrap-input100 validate-input m-b-16" style="display: none;">
-					<input class="input100" type="password" id="CONF_PSWD" name="CONF_PSWD"
-						placeholder="비밀번호 확인" ">
-					<span class="focus-input100"></span>
-				</div>
-				<!-- csrf : 웹 사이트의 취약점을 이용하여 이용자가 의도하지 않은 요청을 통한 공격  -->
-				<!-- 해결책 : CSRF Token 정보를 Header 정보에 포함하여 서버 요청을 시도함 -->
+            <!-- 비밀번호 확인 칸 -->
+            <div id="div_confirm" class="input_box" style="display: none;">
+            	<input class="" type="password" id="CONF_PSWD" name="CONF_PSWD" placeholder="비밀번호 확인 ">
+            	<span class=""></span>
+            </div>
+            <!-- csrf : 웹 사이트의 취약점을 이용하여 이용자가 의도하지 않은 요청을 통한 공격  -->
+            <!-- 해결책 : CSRF Token 정보를 Header 정보에 포함하여 서버 요청을 시도함 -->
 
-				<input type="hidden" name="${_csrf.parameterName}"
-					value="${_csrf.token}" />
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 
-				<div class="container-login100-form-btn m-t-17">
+            <div class="btn">
 
-					<a id="permit_btn" href="javascript:permit();" class="login100-form-btn"
-						style="text-decoration: none;">인증</a> 
-					<a id="reset_btn" href="javascript:resetPassword();"
-						class="login100-form-btn" style="text-decoration: none; display: none;">비밀번호 변경</a>
+                <a id="permit_btn" href="javascript:permit();" class="login100-form-btn" style="text-decoration: none;">인증</a>
+                <a id="reset_btn" href="javascript:resetPassword();" class="login100-form-btn" style="text-decoration: none; display: none;">비밀번호 변경</a>
 
-				</div>
-
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
