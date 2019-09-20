@@ -18,7 +18,7 @@
  *   Date			Modifier	Comment
  * -------------------------------------------------------------------------------------------------
  *   2019.05.21		최해림		Initial Created.
- *   
+ *   2019.09.20.	방재훈
  * -------------------------------------------------------------------------------------------------
  * Copyright 2019-2019 By SM Entertainment Co,Ltd. All rights reserved.
  ****************************************************************************************************
@@ -135,7 +135,6 @@ function deleteFileSuccessCallBack(data){
 <sec:authentication var="principal" property="principal"/>
 
 <div class="table_box">
-    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('list');">
     <form id="update_form" action="/updateProc" method="post" enctype="multipart/form-data">
         <table>
             <colgroup>
@@ -185,8 +184,9 @@ function deleteFileSuccessCallBack(data){
             </tbody>
         </table>
     </form>
-    <div class="insert_btn">
+    <div class="btn_group">
         <button type="button" class="btn" onclick="list_update();">수정</button>
+        <button type="button" class="btn" onclick="back('list');">목록</button>
     </div>
     <div class="clear_fix"></div>
 </div>

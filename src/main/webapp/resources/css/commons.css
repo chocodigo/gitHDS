@@ -846,7 +846,7 @@ select::-ms-expand {
 	margin-bottom: 16px;
 }
 
-/*����ȭ�� ����� �˾�â*/
+/*占쏙옙占쏙옙화占쏙옙 占쏙옙占쏙옙占� 占싯억옙창*/
 .white_content {
 	display: none;
 	position: absolute;
@@ -868,7 +868,7 @@ select::-ms-expand {
 	cursor: pointer;
 }
 
-/*����� div*/
+/*占쏙옙占쏙옙占� div*/
 .how_to_use_div{
 	background-size: cover;
 	background-position: center top;
@@ -966,6 +966,7 @@ select::-ms-expand {
 
 .btn_group{
     text-align: center;
+    float: right;
 }
 
 .btn_group>.btn{
@@ -991,7 +992,7 @@ select::-ms-expand {
 	background: #FFC7D6;
 }
 
-/*요청사항 상세페이지 관리자용 버튼*/
+/*�슂泥��궗�빆 �긽�꽭�럹�씠吏� 愿�由ъ옄�슜 踰꾪듉*/
 .admin_btn{
     float: right;
 }
@@ -1018,7 +1019,7 @@ select::-ms-expand {
 .admin_btn>.btn:hover {
 	background: #FFC7D6;
 }
-/*진행상태 변경 modal*/
+/*吏꾪뻾�긽�깭 蹂�寃� modal*/
 figure.snip1141 {
   font-family: 'Raleway', Arial, sans-serif;
   overflow: hidden;
@@ -1083,7 +1084,7 @@ text-align: center;
 height: auto;
 }
 
-/*답변 타이틀 부분*/
+/*�떟蹂� ���씠�� 遺�遺�*/
 .answer_div{
     margin-top: 20px;
     margin-bottom: 10px;
@@ -1107,7 +1108,7 @@ height: auto;
 	margin-top: 5px !important;
 }
 
-/*관리자 페이지*/
+/*愿�由ъ옄 �럹�씠吏�*/
 .admin_page_div{
     margin: 10px;
 }

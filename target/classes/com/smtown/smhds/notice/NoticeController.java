@@ -5,8 +5,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +38,7 @@ import com.smtown.smhds.util.PrintPage;
  * Date		Modifier		Comment
  * ====================================================
  * 2019.05.28	최해림		Initial Created.
+ * 2019.09.20	방재훈
  * ====================================================
  * </pre>
  *
@@ -43,6 +47,9 @@ import com.smtown.smhds.util.PrintPage;
 
 @Controller
 public class NoticeController {
+	
+	private static final Logger log = LoggerFactory.getLogger(NoticeController.class);
+	
 	/*
 	 * 공지사항 게시판 서비스(Service) 클래스
 	 */
@@ -141,40 +148,45 @@ public class NoticeController {
 	 * @return "/list"
 	 * @exception Exception - 조회시 발생한 예외
 	 */
+	@Transactional
 	@RequestMapping("/noticeInsertProc")
 	public String boardInsertProc(HttpServletRequest request, @RequestPart MultipartFile files) throws Exception{
-		NoticeVO board = new NoticeVO();
-		FileVO file;
-
-		Account account = (Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-		//idxx_numb 만들기
-		String idxx_numb = "";
-
-		idxx_numb = noticeService.noticeSelectIdxxService(); //게시글 주키 생성 로직
-
-		String titl_name = request.getParameter("titl_name");
-		String cont_ents = request.getParameter("cont_ents");
-		String user_name = account.getUsername();
-		String crea_user = account.getReal_name();
-
-		board.setTitl_name(titl_name);	//게시글 제목 설정
-		board.setCont_ents(cont_ents);	//게시글 내용 설정
-		board.setUser_name(user_name);	//게시글 작성자 설정
-		board.setCrea_user(crea_user);	//게시글 작성자 설정
-		board.setIdxx_numb(idxx_numb);
-
-		if(!files.isEmpty()) {
-			FileUtil fileUtil = new FileUtil();
-			file = fileUtil.uploadFile(idxx_numb, files);	//업로드
-
-			if(file!=null)
-				boardService.fileInsertService(file);		//파일 등록 쿼리 실행
-
+		try {
+			NoticeVO board = new NoticeVO();
+			FileVO file;
+	
+			Account account = (Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	
+			//idxx_numb 만들기
+			String idxx_numb = "";
+	
+			idxx_numb = noticeService.noticeSelectIdxxService(); //게시글 주키 생성 로직
+	
+			String titl_name = request.getParameter("titl_name");
+			String cont_ents = request.getParameter("cont_ents");
+			String user_name = account.getUsername();
+			String crea_user = account.getReal_name();
+	
+			board.setTitl_name(titl_name);	//게시글 제목 설정
+			board.setCont_ents(cont_ents);	//게시글 내용 설정
+			board.setUser_name(user_name);	//게시글 작성자 설정
+			board.setCrea_user(crea_user);	//게시글 작성자 설정
+			board.setIdxx_numb(idxx_numb);
+	
+			if(!files.isEmpty()) {
+				FileUtil fileUtil = new FileUtil();
+				file = fileUtil.uploadFile(idxx_numb, files);	//업로드
+	
+				if(file!=null)
+					boardService.fileInsertService(file);		//파일 등록 쿼리 실행
+	
+			}
+	
+			noticeService.noticeInsertService(board);
+		} catch(Exception e) {
+			log.error("boardInsertProc에서 에러발생...");
+			throw new RuntimeException(e);
 		}
-
-		noticeService.noticeInsertService(board);
-
 
 
 		return "redirect:/main";
@@ -188,16 +200,20 @@ public class NoticeController {
 	 */
 	@RequestMapping("/notice_delete")
 	public String noticeDelete(HttpServletRequest request) throws Exception{
-		String idxx_numb = request.getParameter("idxx_numb");
-		FileVO befoFileVO= boardService.fileDetailService(idxx_numb);	//등록돼있는 파일 정보 가져오기
-		noticeService.noticeDeleteService(idxx_numb);
-		if(befoFileVO != null) {
-
-			File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
-			file.delete();									//파일 삭제
-			boardService.fileDeleteService(idxx_numb);		//DB에서 파일정보 삭제
+		try {
+			String idxx_numb = request.getParameter("idxx_numb");
+			FileVO befoFileVO= boardService.fileDetailService(idxx_numb);	//등록돼있는 파일 정보 가져오기
+			noticeService.noticeDeleteService(idxx_numb);
+			if(befoFileVO != null) {
+	
+				File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
+				file.delete();									//파일 삭제
+				boardService.fileDeleteService(idxx_numb);		//DB에서 파일정보 삭제
+			}
+		} catch(Exception e) {
+			log.error("noticeDelete에서 에러발생...");
+			throw new RuntimeException(e);
 		}
-
 		return "redirect:/main";
 	}
 
@@ -226,33 +242,37 @@ public class NoticeController {
 	 */
 	@RequestMapping("/notice_updateProc")
 	public String boardUpdateProc(HttpServletRequest request, @RequestPart MultipartFile files) throws Exception{
-		NoticeVO notice = new NoticeVO();
-		FileUtil fileUtil = new FileUtil();
-
-		String titl_name = request.getParameter("titl_name");
-		String cont_ents = request.getParameter("cont_ents");
-		String idxx_numb = request.getParameter("idxx_numb");
-
-		notice.setTitl_name(titl_name);
-		notice.setCont_ents(cont_ents);
-		notice.setIdxx_numb(idxx_numb);
-
-		FileVO befoFileVO = boardService.fileDetailService(idxx_numb);	//idxx_numb가 가지고 있는 파일 정보 가져오기
-		FileVO fileVO;	//새로 등록할 파일 정보
-
-		if(befoFileVO!=null && !files.isEmpty()) {//게시글에 파일이 등록되어 있고 등록한 파일이 있을 경우
-			boardService.fileDeleteService(idxx_numb);		//DB에 등록돼 있는 파일 정보 삭제
-			File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
-			file.delete();									//파일 삭제
-			fileVO= fileUtil.uploadFile(idxx_numb, files);    //새로운 파일 업로드
-			boardService.fileInsertService(fileVO);			//새로운 파일 정보 DB에 입력
-		} else if(befoFileVO==null && !files.isEmpty()) {		//파일이 등록돼 있지 않을 경우
-			fileVO = fileUtil.uploadFile(idxx_numb, files);    //업로드
-			boardService.fileInsertService(fileVO);			//파일 정보 DB에 입력
+		try {
+			NoticeVO notice = new NoticeVO();
+			FileUtil fileUtil = new FileUtil();
+	
+			String titl_name = request.getParameter("titl_name");
+			String cont_ents = request.getParameter("cont_ents");
+			String idxx_numb = request.getParameter("idxx_numb");
+	
+			notice.setTitl_name(titl_name);
+			notice.setCont_ents(cont_ents);
+			notice.setIdxx_numb(idxx_numb);
+	
+			FileVO befoFileVO = boardService.fileDetailService(idxx_numb);	//idxx_numb가 가지고 있는 파일 정보 가져오기
+			FileVO fileVO;	//새로 등록할 파일 정보
+	
+			if(befoFileVO!=null && !files.isEmpty()) {//게시글에 파일이 등록되어 있고 등록한 파일이 있을 경우
+				boardService.fileDeleteService(idxx_numb);		//DB에 등록돼 있는 파일 정보 삭제
+				File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
+				file.delete();									//파일 삭제
+				fileVO= fileUtil.uploadFile(idxx_numb, files);    //새로운 파일 업로드
+				boardService.fileInsertService(fileVO);			//새로운 파일 정보 DB에 입력
+			} else if(befoFileVO==null && !files.isEmpty()) {		//파일이 등록돼 있지 않을 경우
+				fileVO = fileUtil.uploadFile(idxx_numb, files);    //업로드
+				boardService.fileInsertService(fileVO);			//파일 정보 DB에 입력
+			}
+	
+			noticeService.noticeUpdateService(notice);
+		} catch(Exception e) {
+			log.error("boardUpdateProc에서 에러발생...");
+			throw new RuntimeException(e);
 		}
-
-		noticeService.noticeUpdateService(notice);
-
 		return "redirect:/main";
 	}
 }

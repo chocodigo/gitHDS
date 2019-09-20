@@ -21,8 +21,8 @@
  * -------------------------------------------------------------------------------------------------
  *   Date			Modifier	Comment
  * -------------------------------------------------------------------------------------------------
- *   2019.05.21		최해림		Initial Created.
- *
+ *	2019.05.21		최해림		Initial Created.
+ *	2019.09.20		방재훈	
  * -------------------------------------------------------------------------------------------------
  * Copyright 2019-2019 By SM Entertainment Co,Ltd. All rights reserved.
  ****************************************************************************************************
@@ -45,9 +45,10 @@
   |  01.최초 화면 Load時 처리 할 사항  |
   +------------------------------------*/
 
-
-
  	$(document).ready(function(){
+		console.log("####"+'${principal}');
+
+ 	 	
  		var idxx_numb = '${detail.idxx_numb}';			//게시글 번호
 		var user_name = $("#user_name").val();			//로그인된 사용자 이름
  		var data_name = '${detail.user_name }';			//게시글 작성자 이름
@@ -139,15 +140,9 @@
      	var data_name = '${detail.user_name }';			//게시글 작성자 이름
 
         if(confirm("게시 글을 삭제하시겠습니까?")){
-            if(user_name != data_name){
-    			 alert('작성자만 삭제할 수 있습니다.');}
-            else{
-                var idxx_numb = '${detail.idxx_numb}';			//게시글 번호
-                data = {'idxx_numb' : idxx_numb}
-                ajaxJsonCallSync("/delete", data, listReSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");	//삭제하기 위한 통신
-             }
-        }else{
-
+			var idxx_numb = '${detail.idxx_numb}';			//게시글 번호
+			data = {'idxx_numb' : idxx_numb}
+			ajaxJsonCallSync("/delete", data, listReSuccessCallBack, "${_csrf.headerName}", "${_csrf.token}");	//삭제하기 위한 통신
         }
     }
 /*-----------------------------------+
@@ -186,8 +181,6 @@
 
 
 <div class="table_box">
-    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('list');">
-
 		<!-- 진행상황 수정 버튼 (권한이 001 admin인 경우만 출력)-->
 		<div class="admin_btn">
 			<sec:authorize access="hasAuthority('001')">
@@ -324,10 +317,17 @@
     <input type="hidden" id="user_name" value="${principal.username}"/>
 
     <div class="btn_group">
-        <c:if test="${principal.username eq detail.user_name }">
-            <button type="button" class="btn" onclick="list_update('${detail.idxx_numb}');">수정</button>
+	    <sec:authorize access="hasAuthority('001')">
+	    	<button type="button" class="btn" onclick="list_update('${detail.idxx_numb}');">수정</button>
             <button type="button" class="btn" onclick="list_delete('${detail.idxx_numb}');">삭제</button>
-        </c:if>
+        </sec:authorize>
+    	<sec:authorize access="hasAuthority('002')">
+	        <c:if test="${principal.username eq detail.user_name }">
+	            <button type="button" class="btn" onclick="list_update('${detail.idxx_numb}');">수정</button>
+	            <button type="button" class="btn" onclick="list_delete('${detail.idxx_numb}');">삭제</button>
+	        </c:if>
+        </sec:authorize>
+        <button type="button" class="btn" onclick="back('list');">목록</button>
     </div>
     <div class="clear_fix"></div>
 

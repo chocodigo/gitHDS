@@ -20,7 +20,7 @@
  *   Date			Modifier	Comment
  * -------------------------------------------------------------------------------------------------
  *   2019.05.21		최해림		Initial Created.
- *
+ *	 2019.09.20		방재훈
  * -------------------------------------------------------------------------------------------------
  * Copyright 2019-2019 By SM Entertainment Co,Ltd. All rights reserved.
  ****************************************************************************************************
@@ -123,13 +123,13 @@
             <col width="10%">
             <col width="15%">
             <col width="10%">
-            <col width="40%">
+            <col width="35%">
             <col width="15%">
             <col width="15%">
         </colgroup>
         <thead>
             <tr>
-                <th>순번</th>
+                <th>번호</th>
                	<th style="padding:0;">
 					<select id="select_category" onchange="changeList()">
 						<option value="00">카테고리</option>
@@ -138,8 +138,8 @@
 						</c:forEach>
 					</select>
                 </th>
-                <th>제목</th>
                 <th>상태</th>
+                <th>제목</th>
                 <th>작성자</th>
                 <th>작성일</th>
             </tr>

@@ -17,8 +17,8 @@
  * -------------------------------------------------------------------------------------------------
  *   Date			Modifier	Comment
  * -------------------------------------------------------------------------------------------------
- *   2019.05.21		최해림		Initial Created.
- *   
+ *	2019.05.21		최해림		Initial Created.
+ *	2019.09.20		방재훈
  * -------------------------------------------------------------------------------------------------
  * Copyright 2019-2019 By SM Entertainment Co,Ltd. All rights reserved.
  ****************************************************************************************************
@@ -64,84 +64,60 @@ function insert(){
 	}else{
 	}
 	
-/* 		var params = new Object(); 		 /* 파라미터를 담을 Object 선언  */
-		var submitFlag = true;			 /* validation Flag */
-		var objKeys = []; 				 /* object key 이름이 담길 배열 */
-		var thisId;						 /* 태그 속성 중 name으로 $("#name") 설정*/
-		var tagName;					 /* 태그네임 변수*/
+/* 	var params = new Object(); 		 //파라미터를 담을 Object 선언 
+	var submitFlag = true;			 //validation Flag
+	var objKeys = []; 				 //object key 이름이 담길 배열
+	var thisId;						 //태그 속성 중 name으로 $("#name") 설정
+	var tagName;					 //태그네임 변수
 
-		  /* 파라미터 세팅  */
- 		  params = {						 
- 					titl_name : $("#titl_name").val(),
- 					select_category :  $("#select_category option:selected").val(),
- 					cont_ents : $("#cont_ents").val()
- 				  }
-
- 		 /* 파라미터 key 조회  */
- 		 objKeys = Object.keys(params);
-
- 		 /* key와 input, select, textarea의 name 매칭으로 validation check  */
-		$.each(objKeys, function(idx, obj){
-					  
-			thisId = $("#"+obj);
-			tagName = $thisObj.prop("tagName");
-			
-			var cmt = "";
-			
-			/* TagName에 따른 문구 분기처리  */
-			if($tagName == "INPUT" || $tagName == "TEXTAREA"){
-				cmt = "을(를) 입력해주세요.";
-			} else if($tagName == "SELECT"){
-				cmt = "을(를) 선택해주세요.";
+	//파라미터 세팅
+	params = {
+			titl_name : $("#titl_name").val(),
+			select_category :  $("#select_category option:selected").val(),
+			cont_ents : $("#cont_ents").val()
 			}
-			
-			/* 해당 값 없을 시 alert, focus 처리  */
-			if($thisObj.val() == ""){
-				alert($thisObj.prop("title") + cmt);
-				$thisObj.focus();
-				flag = false;
-				return false;
-			}
-		});
-			 if(submitFlag)
-		 	$("#insert_form").submit(); */
+
+	//파라미터 key 조회
+	objKeys = Object.keys(params);
+
+	//key와 input, select, textarea의 name 매칭으로 validation check
+	$.each(objKeys, function(idx, obj){
+				  
+		thisId = $("#"+obj);
+		tagName = $thisObj.prop("tagName");
+		
+		var cmt = "";
+		
+		//TagName에 따른 문구 분기처리 
+		if($tagName == "INPUT" || $tagName == "TEXTAREA"){
+			cmt = "을(를) 입력해주세요.";
+		} else if($tagName == "SELECT"){
+			cmt = "을(를) 선택해주세요.";
+		}
+		
+		//해당 값 없을 시 alert, focus 처리 
+		if($thisObj.val() == ""){
+			alert($thisObj.prop("title") + cmt);
+			$thisObj.focus();
+			flag = false;
+			return false;
+		}
+	});
+	if(submitFlag)
+	$("#insert_form").submit(); */
 }
  /*-----------------------------------+
  |  03.셀렉트박스 카테고리 값 처리  |
  +------------------------------------*/
  function changePlaceholder(){
 	 var select_code =  $("#select_category option:selected").val();	//선택한 값의 code 가져오기
-	 
-	 switch(select_code){
-	 case '01':
-		 $("#cate_gory").val(select_code);
-		 break;
-	 case '02':
-		 $("#cate_gory").val(select_code);
-		 break;
-	 case '03':
-		 $("#cate_gory").val(select_code);
-		 break;
-     case '04':
-     	$("#cate_gory").val(select_code);
-    	 break;
-     case '05':
-   		 $("#cate_gory").val(select_code);
-   		 break;
-     case '06':
-     	$("#cate_gory").val(select_code);
-     	break;
-     case '07':
-     	$("#cate_gory").val(select_code);
-     	break;
-	 }
+	 $("#cate_gory").val(select_code);
  }
 </script>
 
 <sec:authentication var="principal" property="principal"/>
 
 <div class="table_box">
-    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('list');">
     <form id="insert_form" action="/insertProc" method="post" enctype="multipart/form-data">
         <table>
             <colgroup>
@@ -161,7 +137,7 @@ function insert(){
                 <tr>
                     <td>문제상황</td>
                     <td>
-						<select id="select_category" style="border:0" onchange="changePlaceholder()" title="카테고리">
+						<select id="select_category" style="border:0" onchange="javascript:changePlaceholder();" title="카테고리">
 							<option value="cate_all">카테고리</option>
 							<c:forEach var="item" items="${category_list }">
 								<option value="${item.comm_code }">${item.code_name }</option>
@@ -182,8 +158,9 @@ function insert(){
             </tbody>
         </table>
     </form>
-    <div class="insert_btn">
+    <div class="btn_group">
         <button type="button" class="btn" onclick="insert();">등록</button>
+        <button type="button" class="btn" onclick="back('list');">목록</button>
     </div>
     <div class="clear_fix"></div>
 </div>
