@@ -19,7 +19,7 @@
  *   Date			Modifier	Comment
  * -------------------------------------------------------------------------------------------------
  *   2019.05.30		최해림		Initial Created.
- *   
+ *   2019.09.20		방재훈
  * -------------------------------------------------------------------------------------------------
  * Copyright 2019-2019 By SM Entertainment Co,Ltd. All rights reserved.
  ****************************************************************************************************
@@ -87,7 +87,6 @@
 
 </script>
 <div class="table_box">
-    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('notice');">
     <form id="update_form" action="/notice_updateProc" method="post" enctype="multipart/form-data">
         <table>
             <colgroup>
@@ -125,8 +124,9 @@
             </tbody>
         </table>
     </form>
-    <div class="insert_btn">
-        <button type="button" class="btn" onclick="notice_update();">수정</button>
+    <div class="btn_group">
+       	<button type="button" class="btn" onclick="notice_update();">수정</button>
+        <button type="button" class="btn" onclick="back('notice');">목록</button>
     </div>
     <div class="clear_fix"></div>
 </div>

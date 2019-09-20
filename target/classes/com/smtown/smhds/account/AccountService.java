@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
  * Date		Modifier		Comment
  * ====================================================
  * 2019.05.21	최해림		Initial Created.
- * 2019.09.09	방재훈
+ * 2019.09.20	방재훈
  * ====================================================
  * </pre>
  *
@@ -105,6 +105,16 @@ public class AccountService implements UserDetailsService{
 	 */
 	public int insAdUser(ADUserVO adUserVo) throws Exception{
 		return accountMapper.insAdUser(adUserVo);
+	}
+	
+	/*
+	 * User 권한 부여
+	 * @param	ADUserVO
+	 * @return int
+	 * @exception Exception
+	 */
+	public int mergAuth() throws Exception{
+		return accountMapper.mergAuth();
 	}
 	
 	/*

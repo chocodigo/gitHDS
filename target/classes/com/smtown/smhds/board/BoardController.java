@@ -13,6 +13,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,6 +58,7 @@ import com.smtown.smhds.util.PrintPage;
  * Date		Modifier		Comment
  * ====================================================
  * 2019.05.21	최해림		Initial Created.
+ * 2019.09.20	방재훈		
  * ====================================================
  * </pre>
  *
@@ -62,6 +66,10 @@ import com.smtown.smhds.util.PrintPage;
  */
 @Controller
 public class BoardController{
+	
+	private static final Logger log = LoggerFactory.getLogger(BoardController.class);
+
+	
 	// 요청사항 게시판 서비스(Service) 클래스
 	private final BoardService boardService;
 
@@ -349,44 +357,50 @@ public class BoardController{
 	 * @return "/list"
 	 * @exception Exception - 조회시 발생한 예외
 	 */
+	@Transactional
 	@RequestMapping("/insertProc")
 	public String boardInsertProc(HttpServletRequest request,  @RequestPart MultipartFile files) throws Exception{
-		BoardVO board = new BoardVO();
-		FileVO file;
-		String idxx_numb = boardService.boardSelectIdxxService(); //게시글 주키 생성
-
-		Account account = (Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal();	//acoount 정보 받아오기
-		String user_name = account.getUsername();	//로그인한 사용자의 user_name받아오기
-		Account user_account = accountService.accountDetailService(user_name);		//user_name을 통해 계정정보 받아오기
-
-		String titl_name = request.getParameter("titl_name");
-		String cont_ents = request.getParameter("cont_ents");
-		String crea_user = user_account.getReal_name();
-		String stat_flag = "01";
-		String cate_gory = request.getParameter("cate_gory");
-
-		board.setTitl_name(titl_name);	//게시글 제목
-		board.setCont_ents(cont_ents);	//게시글 내용
-		board.setUser_name(user_name);	//작성자 이름
-		board.setCrea_user(crea_user);	//작성자 이름
-		board.setStat_flag(stat_flag);	//첫 글 작성시 신규상태로 초기화( 01 - 신규/ 02 - 담당자 접수/ 03 - 진행/ 04 - 완료)
-		board.setIdxx_numb(idxx_numb);	//idxx_numb 생성
-		board.setCate_gory(cate_gory);	//카테고리 설정
-
-		//파일첨부시
-		if(!files.isEmpty()) {
-			FileUtil fileUtil = new FileUtil();
-			file = fileUtil.uploadFile(idxx_numb, files);	//업로드
-
-			if(file!=null)
-				boardService.fileInsertService(file);		//파일 등록 쿼리 실행
-
+		
+		try {
+		
+			BoardVO board = new BoardVO();
+			FileVO file;
+			String idxx_numb = boardService.boardSelectIdxxService(); //게시글 주키 생성
+	
+			Account account = (Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal();	//acoount 정보 받아오기
+			String user_name = account.getUsername();	//로그인한 사용자의 user_name받아오기
+			Account user_account = accountService.accountDetailService(user_name);		//user_name을 통해 계정정보 받아오기
+	
+			String titl_name = request.getParameter("titl_name");
+			String cont_ents = request.getParameter("cont_ents");
+			String crea_user = user_account.getReal_name();
+			String stat_flag = "01";
+			String cate_gory = request.getParameter("cate_gory");
+	
+			board.setTitl_name(titl_name);	//게시글 제목
+			board.setCont_ents(cont_ents);	//게시글 내용
+			board.setUser_name(user_name);	//작성자 이름
+			board.setCrea_user(crea_user);	//작성자 이름
+			board.setStat_flag(stat_flag);	//첫 글 작성시 신규상태로 초기화( 01 - 신규/ 02 - 담당자 접수/ 03 - 진행/ 04 - 완료)
+			board.setIdxx_numb(idxx_numb);	//idxx_numb 생성
+			board.setCate_gory(cate_gory);	//카테고리 설정
+	
+			//파일첨부시
+			if(!files.isEmpty()) {
+				FileUtil fileUtil = new FileUtil();
+				file = fileUtil.uploadFile(idxx_numb, files);	//업로드
+	
+				if(file!=null)
+					boardService.fileInsertService(file);		//파일 등록 쿼리 실행
+	
+			}
+	
+			boardService.boardInsertService(board);		//게시글 등록 쿼리 실행
+		
+		} catch(Exception e) {
+			log.error("boardInsertProc에서 에러발생...");
+			throw new RuntimeException(e);
 		}
-
-		boardService.boardInsertService(board);		//게시글 등록 쿼리 실행
-		if(true)
-		throw new Exception();
-
 		return "redirect:/main?tab_menu=list";
 	}
 
@@ -481,37 +495,42 @@ public class BoardController{
 	 * @return "/detail/idxx_numb"
 	 * @exception Exception - 조회시 발생한 예외
 	 */
+	@Transactional
 	@RequestMapping("/updateStatProc")
 	public String boardUpdateStatProc(HttpServletRequest request) throws Exception{
-		BoardVO board = new BoardVO();
-		Account boardAccount = new Account();	//글 작성자 계정
-
-		String stat_flag = request.getParameter("stat_flag");
-		String idxx_numb = request.getParameter("idxx_numb");
-		String titl_name = request.getParameter("titl_name");
-		String user_name = request.getParameter("user_name");
-			
-		board.setStat_flag(stat_flag);	//변화 상태 받아오기
-		board.setIdxx_numb(idxx_numb);	//idxx_numb 받아오기
-		board.setTitl_name(titl_name);	//게시글 제목 받아오기
-		board.setUser_name(user_name);	//글 작성자 받아오기
-
-		boardService.boardUpdateStatService(board);					//게시글 상태 변화 Query 실행
-		boardAccount = accountService.accountDetailService(user_name);		//글작성자 계정정보 받아오기
-
-		//글 상태 수정 시 글 작성자에게 메일 보내기
-		MailUtil mailUtil=new MailUtil(sender);
-
-		//메일 내용 설정
-		String from="cocoa1149@smtown.com";
-		String to =boardAccount.getUser_mail();
-		String subject = "smHDS : 등록된 글의 진행상황이 변경되었습니다.";
-		String mailMsg = "등록하신 요청사항 '"+board.getTitl_name()+"' 의 진행상황이 '"+
-				boardService.selectCodeNameService(stat_flag)+
-				"'으로 변경되었습니다.";
-
-		mailUtil.sendMail(from,to,subject,mailMsg);				//메일 내용 보내기
-
+		try {
+			BoardVO board = new BoardVO();
+			Account boardAccount = new Account();	//글 작성자 계정
+	
+			String stat_flag = request.getParameter("stat_flag");
+			String idxx_numb = request.getParameter("idxx_numb");
+			String titl_name = request.getParameter("titl_name");
+			String user_name = request.getParameter("user_name");
+				
+			board.setStat_flag(stat_flag);	//변화 상태 받아오기
+			board.setIdxx_numb(idxx_numb);	//idxx_numb 받아오기
+			board.setTitl_name(titl_name);	//게시글 제목 받아오기
+			board.setUser_name(user_name);	//글 작성자 받아오기
+	
+			boardService.boardUpdateStatService(board);					//게시글 상태 변화 Query 실행
+			boardAccount = accountService.accountDetailService(user_name);		//글작성자 계정정보 받아오기
+	
+			//글 상태 수정 시 글 작성자에게 메일 보내기
+			MailUtil mailUtil=new MailUtil(sender);
+	
+			//메일 내용 설정
+			String from="cocoa1149@smtown.com";
+			String to =boardAccount.getUser_mail();
+			String subject = "smHDS : 등록된 글의 진행상황이 변경되었습니다.";
+			String mailMsg = "등록하신 요청사항 '"+board.getTitl_name()+"' 의 진행상황이 '"+
+					boardService.selectCodeNameService(stat_flag)+
+					"'으로 변경되었습니다.";
+	
+			mailUtil.sendMail(from,to,subject,mailMsg);				//메일 내용 보내기
+		} catch(Exception e) {
+			log.error("boardUpdateStatProc에서 에러발생...");
+			throw new RuntimeException(e);
+		}
 		return "redirect:/main?tab_menu=list";
 	}
 
@@ -521,20 +540,25 @@ public class BoardController{
 	 * @return "/list/"
 	 * @exception Exception - 조회시 발생한 예외
 	 */
+	@Transactional
 	@RequestMapping("/delete")
 	public String boardDelete(HttpServletRequest request) throws Exception{
-		String idxx_numb = request.getParameter("idxx_numb");		//삭제할 게시글 ID 가져오기
-		FileVO befoFileVO= boardService.fileDetailService(idxx_numb);	//게시글에 등록돼있는 파일 정보 가져오기
-		boardService.boardDeleteService(idxx_numb);						//게시글 삭제 Query 실행
-
-		//파일이 등록돼있으면
-		if(befoFileVO != null) {
-
-			File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
-			file.delete();									//파일 삭제
-			boardService.fileDeleteService(idxx_numb);		//DB에서 파일정보 삭제
+		try {
+			String idxx_numb = request.getParameter("idxx_numb");		//삭제할 게시글 ID 가져오기
+			FileVO befoFileVO= boardService.fileDetailService(idxx_numb);	//게시글에 등록돼있는 파일 정보 가져오기
+			boardService.boardDeleteService(idxx_numb);						//게시글 삭제 Query 실행
+	
+			//파일이 등록돼있으면
+			if(befoFileVO != null) {
+	
+				File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
+				file.delete();									//파일 삭제
+				boardService.fileDeleteService(idxx_numb);		//DB에서 파일정보 삭제
+			}
+		} catch(Exception e) {
+			log.error("boardDelete에서 에러발생...");
+			throw new RuntimeException(e);
 		}
-
 		return "redirect:/main?tab_menu=list";
 	}
 
@@ -629,7 +653,5 @@ public class BoardController{
 
 		return "board/BoardList";
 	}
-
-
 
 }

@@ -5,9 +5,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +40,7 @@ import com.smtown.smhds.util.PrintPage;
  * Date		Modifier		Comment
  * ====================================================
  * 2019.07.23	최해림		Initial Created.
+ * 2019.09.20	방재훈		
  * ====================================================
  * </pre>
  *
@@ -45,6 +49,9 @@ import com.smtown.smhds.util.PrintPage;
 
 @Controller
 public class SoftwareController {
+	
+	private static final Logger log = LoggerFactory.getLogger(SoftwareController.class);
+
     /*
      * 자료실 게시판 서비스(Service) 클래스
      */
@@ -110,36 +117,42 @@ public class SoftwareController {
      * @return "/list"
      * @exception Exception - 조회시 발생한 예외
      */
+    @Transactional
     @RequestMapping("/softwareInsertProc")
     public String softwareInsertProc(HttpServletRequest request, @RequestPart MultipartFile files) throws Exception{
-        SoftwareVO board = new SoftwareVO();  //software VO 생성
-
-        Account account = (Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal();	//로그인된 계정 정보 받아오기
-
-        String idxx_numb = softwareService.softwareSelectIdxxService(); //게시글 주키 생성 로직
-
-        String titl_name = request.getParameter("titl_name");
-        String cont_ents = request.getParameter("cont_ents");
-        String user_name = account.getUsername();
-        String crea_user = account.getReal_name();
-
-        board.setTitl_name(titl_name);	//게시글 제목 설정
-        board.setCont_ents(cont_ents);	//게시글 내용 설정
-        board.setUser_name(user_name);	//게시글 작성자 설정
-        board.setCrea_user(crea_user);	//게시글 작성자 설정
-        board.setIdxx_numb(idxx_numb);								//게시글 주키 설정
-
-        //파일이 존재할 경우
-        if(!files.isEmpty()) {
-            FileUtil fileUtil = new FileUtil();
-            FileVO file = fileUtil.uploadFile(idxx_numb, files);	//업로드
-
-            if(file!=null)
-                boardService.fileInsertService(file);		//파일 등록 쿼리 실행
-
-        }
-        softwareService.softwareInsertService(board);		//게시글 등록 Query 실행
-
+    	
+    	try {
+	        SoftwareVO board = new SoftwareVO();  //software VO 생성
+	
+	        Account account = (Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal();	//로그인된 계정 정보 받아오기
+	
+	        String idxx_numb = softwareService.softwareSelectIdxxService(); //게시글 주키 생성 로직
+	
+	        String titl_name = request.getParameter("titl_name");
+	        String cont_ents = request.getParameter("cont_ents");
+	        String user_name = account.getUsername();
+	        String crea_user = account.getReal_name();
+	
+	        board.setTitl_name(titl_name);	//게시글 제목 설정
+	        board.setCont_ents(cont_ents);	//게시글 내용 설정
+	        board.setUser_name(user_name);	//게시글 작성자 설정
+	        board.setCrea_user(crea_user);	//게시글 작성자 설정
+	        board.setIdxx_numb(idxx_numb);								//게시글 주키 설정
+	
+	        //파일이 존재할 경우
+	        if(!files.isEmpty()) {
+	            FileUtil fileUtil = new FileUtil();
+	            FileVO file = fileUtil.uploadFile(idxx_numb, files);	//업로드
+	
+	            if(file!=null)
+	                boardService.fileInsertService(file);		//파일 등록 쿼리 실행
+	
+	        }
+	        softwareService.softwareInsertService(board);		//게시글 등록 Query 실행
+    	} catch(Exception e) {
+    		log.error("softwareInsertProc에서 에러발생...");
+    		throw new RuntimeException(e);
+    	}
 
         return "redirect:/main?tab_menu=software";
     }
@@ -170,21 +183,26 @@ public class SoftwareController {
      * @return
      * @exception Exception - 조회시 발생한 예외
      */
+    @Transactional
     @RequestMapping("/software_delete")
     @ResponseBody
     public int softwareDelete(HttpServletRequest request) throws Exception{
-        String idxx_numb = request.getParameter("idxx_numb");
-        FileVO befoFileVO= boardService.fileDetailService(idxx_numb);	//등록돼있는 파일 정보 가져오기
-        //게시글 삭제 Query 실행
-
-        //파일이 존재할 경우
-        if(befoFileVO != null) {
-
-            File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
-            file.delete();									//파일 삭제
-            boardService.fileDeleteService(idxx_numb);		//DB에서 파일정보 삭제
-        }
-
+    	String idxx_numb = request.getParameter("idxx_numb");
+    	try {
+	        FileVO befoFileVO= boardService.fileDetailService(idxx_numb);	//등록돼있는 파일 정보 가져오기
+	        //게시글 삭제 Query 실행
+	
+	        //파일이 존재할 경우
+	        if(befoFileVO != null) {
+	
+	            File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
+	            file.delete();									//파일 삭제
+	            boardService.fileDeleteService(idxx_numb);		//DB에서 파일정보 삭제
+	        }
+    	} catch(Exception e) {
+    		log.error("softwareDelete에서 에러발생...");
+    		throw new RuntimeException(e);
+    	}
         return softwareService.softwareDeleteService(idxx_numb);
     }
 
@@ -217,34 +235,39 @@ public class SoftwareController {
      */
     @RequestMapping("/software_updateProc")
     public String boardUpdateProc(HttpServletRequest request, @RequestPart MultipartFile files) throws Exception{
-        SoftwareVO softwareVO = new SoftwareVO();
-        FileUtil fileUtil = new FileUtil();
-
-        String titl_name = request.getParameter("titl_name");	//게시글 제목 받아오기
-        String cont_ents = request.getParameter("cont_ents");	//게시글 내용 받아오기
-        String idxx_numb = request.getParameter("idxx_numb");	//게시글 주키 받아오기
-
-        softwareVO.setTitl_name(titl_name);	//게시글 제목 등록
-        softwareVO.setCont_ents(cont_ents);	//게시글 내용 등록
-        softwareVO.setIdxx_numb(idxx_numb);	//게시글 주키 등록
-
-        FileVO befoFileVO = boardService.fileDetailService(idxx_numb);	//idxx_numb가 가지고 있는 파일 정보 가져오기
-        FileVO fileVO = new FileVO();	//새로 등록할 파일 정보
-
-        if(befoFileVO!=null && !files.isEmpty()) {//게시글에 파일이 등록되어 있고 등록한 파일이 있을 경우
-            boardService.fileDeleteService(idxx_numb);		//DB에 등록돼 있는 파일 정보 삭제
-            File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
-            file.delete();									//파일 삭제
-            fileVO= fileUtil.uploadFile(idxx_numb, files);    //새로운 파일 업로드
-            boardService.fileInsertService(fileVO);			//새로운 파일 정보 DB에 입력
-        } else if(befoFileVO==null && !files.isEmpty()) {		//파일이 등록돼 있지 않을 경우
-            fileVO = fileUtil.uploadFile(idxx_numb, files);    //업로드
-            boardService.fileInsertService(fileVO);			//파일 정보 DB에 입력
-        }
-
-
-        softwareService.softwareUpdateService(softwareVO);	//게시글 수정 Query 실행
-
+    	
+    	try {
+	        SoftwareVO softwareVO = new SoftwareVO();
+	        FileUtil fileUtil = new FileUtil();
+	
+	        String titl_name = request.getParameter("titl_name");	//게시글 제목 받아오기
+	        String cont_ents = request.getParameter("cont_ents");	//게시글 내용 받아오기
+	        String idxx_numb = request.getParameter("idxx_numb");	//게시글 주키 받아오기
+	
+	        softwareVO.setTitl_name(titl_name);	//게시글 제목 등록
+	        softwareVO.setCont_ents(cont_ents);	//게시글 내용 등록
+	        softwareVO.setIdxx_numb(idxx_numb);	//게시글 주키 등록
+	
+	        FileVO befoFileVO = boardService.fileDetailService(idxx_numb);	//idxx_numb가 가지고 있는 파일 정보 가져오기
+	        FileVO fileVO = new FileVO();	//새로 등록할 파일 정보
+	
+	        if(befoFileVO!=null && !files.isEmpty()) {//게시글에 파일이 등록되어 있고 등록한 파일이 있을 경우
+	            boardService.fileDeleteService(idxx_numb);		//DB에 등록돼 있는 파일 정보 삭제
+	            File file = new File(befoFileVO.getFile_urll()+befoFileVO.getFile_name());	//파일이 등록돼있는 URL에서 파일 가져오기
+	            file.delete();									//파일 삭제
+	            fileVO= fileUtil.uploadFile(idxx_numb, files);    //새로운 파일 업로드
+	            boardService.fileInsertService(fileVO);			//새로운 파일 정보 DB에 입력
+	        } else if(befoFileVO==null && !files.isEmpty()) {		//파일이 등록돼 있지 않을 경우
+	            fileVO = fileUtil.uploadFile(idxx_numb, files);    //업로드
+	            boardService.fileInsertService(fileVO);			//파일 정보 DB에 입력
+	        }
+	
+	
+	        softwareService.softwareUpdateService(softwareVO);	//게시글 수정 Query 실행
+    	} catch(Exception e) {
+    		log.error("boardUpdateProc에서 에러발생...");
+    		throw new RuntimeException(e);
+    	}
         return "redirect:/main?tab_menu=software";
     }
 }

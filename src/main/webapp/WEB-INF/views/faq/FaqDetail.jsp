@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,7 +19,7 @@
  *   Date			Modifier	Comment
  * -------------------------------------------------------------------------------------------------
  *   2019.06.17		최해림		Initial Created.
- *   
+ *   2019.09.20		방재훈
  * -------------------------------------------------------------------------------------------------
  * Copyright 2019-2019 By SM Entertainment Co,Ltd. All rights reserved.
  ****************************************************************************************************
@@ -77,7 +78,6 @@
     }
 </script>
 <div class="table_box">
-    <img class="back_img" src="${contextPath}/resources/images/back.png" onclick="back('faq');">
     <table>
         <colgroup>
             <col width="10%">
@@ -117,8 +117,11 @@
         </tbody>
     </table>
     <div class="btn_group">
-        <button type="button" class="btn" onclick="faq_update('${detail.idxx_numb}');">수정</button>
-        <button type="button" class="btn" onclick="faq_delete('${detail.idxx_numb}');">삭제</button>
+        <sec:authorize access="hasAuthority('001')">
+	        <button type="button" class="btn" onclick="faq_update('${detail.idxx_numb}');">수정</button>
+	        <button type="button" class="btn" onclick="faq_delete('${detail.idxx_numb}');">삭제</button>
+        </sec:authorize>
+        <button type="button" class="btn" onclick="back('faq')">목록</button>
     </div>
     <div class="clear_fix"></div>
 </div>

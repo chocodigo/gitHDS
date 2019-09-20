@@ -21,7 +21,7 @@
  *   Date			Modifier	Comment
  * -------------------------------------------------------------------------------------------------
  *   2019.07.23		최해림		Initial Created.
- *
+ *	 2019.09.20		방재훈
  * -------------------------------------------------------------------------------------------------
  * Copyright 2019-2019 By SM Entertainment Co,Ltd. All rights reserved.
  ****************************************************************************************************
@@ -95,16 +95,16 @@
     <table>
         <colgroup>
             <col width="10%">
-            <col width="50%" >
-            <col width="20%" >
-            <col width="10%">
+            <col width="60%" >
+            <col width="15%" >
+            <col width="15%">
         </colgroup>
         <thead>
             <tr>
-                <th>순번</th>
+                <th>번호</th>
                 <th>제목</th>
-                <th>날짜</th>
                 <th>작성자</th>
+                <th>날짜</th>
             </tr>
         </thead>
         <tbody>
@@ -114,10 +114,10 @@
                     <td class="text_c">
                         <a href='javascript: software_detail("${item.idxx_numb}")'>${item.titl_name}</a>
                     </td>
+                    <td>${item.crea_user}</td>
                     <td>
                         <fmt:formatDate pattern="yyyy-MM-dd" value="${item.crea_date}" />
                     </td>
-                    <td>${item.crea_user}</td>
                 </tr>
             </c:forEach>
         </tbody>

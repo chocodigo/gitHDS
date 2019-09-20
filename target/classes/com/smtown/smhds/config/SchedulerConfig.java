@@ -1,5 +1,23 @@
 package com.smtown.smhds.config;
-
+/**
+ * <pre>
+ *	SchedulerConfig.java - 스케줄러
+ * </pre>
+ *
+ * @author	방재훈
+ * @since	2019.09.10
+ * @version	1.0
+ *
+ * <pre>
+ * == Modification Information ==
+ * Date		Modifier		Comment
+ * ====================================================
+ * 2019.09.20	방재훈		Initial Created.
+ * ====================================================
+ * </pre>
+ *
+ * Copyright SM Entertainment.(C) All right reserved.
+ */
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -15,11 +33,13 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.PresentFilter;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.smtown.smhds.account.ADUserVO;
 import com.smtown.smhds.account.AccountService;
+import com.smtown.smhds.account.AuthVO;
 
 @Transactional
 @Component
@@ -31,7 +51,7 @@ public class SchedulerConfig {
 	private AccountService accountService;
 
 	@SuppressWarnings("unchecked")
-	@Scheduled(cron = "10 * * * * *")
+	@Scheduled(cron = "0 0 6 * * *")
 	public void cronJobSch() throws Exception {
 		// TODO
 
@@ -98,19 +118,22 @@ public class SchedulerConfig {
 		
 		  
 		log.debug("=============================>"+ADUserList.size());
-		/*
-		 * for(ADUserVO adUserVo : ADUserList) { //초기 비밀번호 String defaultPassword = new
-		 * BCryptPasswordEncoder().encode("1111");
-		 * 
-		 * adUserVo.setPass_word(defaultPassword);
-		 * 
-		 * log.debug("===> {}", adUserVo.getUser_name());
-		 * 
-		 * //HD_ADUSER 테이블에 저장 accountService.insAdUser(adUserVo); }
-		 * 
-		 * //ADUser User Merge accountService.mergADUserToUser();
-		 */
-		 
+		
+		for(ADUserVO adUserVo : ADUserList) { 
+			  //초기 비밀번호 
+			String defaultPassword = new BCryptPasswordEncoder().encode("1111");
+		  
+			adUserVo.setPass_word("{bcrypt}"+defaultPassword);
+		  
+			log.debug("===> {}", adUserVo.getUser_name());
+		  
+			//HD_ADUSER 테이블에 저장 
+			accountService.insAdUser(adUserVo); 
+		}
+		  
+		//ADUser User Merge 
+		accountService.mergADUserToUser();
+		//Auth User Merge
+		accountService.mergAuth();   
 	}
-
 }
