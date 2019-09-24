@@ -141,18 +141,26 @@
             </tr>
         </thead>
         <tbody>
-            <c:forEach var="item" items="${list}">
+           
                 <tr align="center">
-                    <td><c:out value="${item.numb_keyx}"/></td>
-                    <td class="text_c">
-                        <a href='javascript: notice_detail("${item.idxx_numb}")'>${item.titl_name}</a>
-                    </td>
-                    <td><c:out value="${item.crea_user}"/></td>
-                    <td>
-                        <fmt:formatDate pattern="yyyy-MM-dd" value="${item.crea_date}" />
-                    </td>
+                	<c:choose>
+                	<c:when test="${list.size() gt 0}">
+                 	<c:forEach var="item" items="${list}">
+	                    <td><c:out value="${item.numb_keyx}"/></td>
+	                    <td class="text_c">
+	                        <a href='javascript: notice_detail("${item.idxx_numb}")'>${item.titl_name}</a>
+	                    </td>
+	                    <td><c:out value="${item.crea_user}"/></td>
+	                    <td>
+	                        <fmt:formatDate pattern="yyyy-MM-dd" value="${item.crea_date}" />
+	                    </td>
+                    </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                    	<td colspan="4">등록된 글이 없습니다.</td>
+                    </c:otherwise>
+                    </c:choose>
                 </tr>
-            </c:forEach>
         </tbody>
     </table>
     <!-- 페이징 하단 -->

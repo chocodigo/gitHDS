@@ -92,9 +92,9 @@
             </tbody>
         </table>
     </form>
-    <div class="group_btn">
+    <div class="btn_group">
         <button type="button" class="btn" onclick="insert();">등록</button>
-        <button type="button" class="btn" onclick="back('list');">등록</button>
+        <button type="button" class="btn" onclick="back('list');">목록</button>
     </div>
     <div class="clear_fix"></div>
 </div>

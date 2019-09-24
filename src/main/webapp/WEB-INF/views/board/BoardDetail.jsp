@@ -3,6 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<% pageContext.setAttribute("LF", "\n"); %>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -189,8 +191,6 @@
 				    <button class="btn" onclick="comment_insert('${idxx_numb}')">답글등록</button>
 				</c:if>
 				<button class="btn" data-toggle="modal" data-target="#progress_Modal">진행상황 수정</button>
-
-
 				<!-- Modal -->
 				<div class="modal fade" id="progress_Modal" role="dialog">
 				    <div class="modal-dialog" >
@@ -200,7 +200,6 @@
 				        <div class="modal-header">
 				          <h4 class="modal-title">수정할 진행상황을 선택해주세요.</h4>
 				          <button type="button" class="close" data-dismiss="modal">&times;</button>
-
 				        </div>
 				        <div class="modal-body">
 
@@ -290,7 +289,7 @@
             </tr>
             <tr>
                 <td>내용</td>
-                <td colspan="3">${detail.cont_ents}</td>
+                <td colspan="3"><c:out value="${fn:replace(detail.cont_ents,LF,'<br>')}" escapeXml="false"/></td>
             </tr>
             <tr>
                 <td>첨부파일</td>

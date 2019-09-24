@@ -40,12 +40,10 @@
     /*********************************************************************************** 
      -->
 	<update id="boardResetPassword">
-		UPDATE
-		HD_User
+		UPDATE HD_User
 		SET
-		PASS_WORD = #{pass_word}
-		WHERE
-		USER_NAME = #{user_name}
+			PASS_WORD = #{pass_word}
+		WHERE USER_NAME = #{user_name}
 	</update>
 
 	<!--
@@ -282,11 +280,16 @@
 	<update id="boardUpdate" parameterType="com.smtown.smhds.board.BoardVO">
 		UPDATE HD_Board
 		SET
-		TITL_NAME = #{titl_name},				/*제목*/
-
-		CONT_ENTS = #{cont_ents},				/*내용*/
-		CATE_GORY = #{cate_gory},
-		UPDA_DATE = now()						/*수정일자*/
+		<if test="titl_name != null and titl_name != ''">
+			TITL_NAME = #{titl_name},				/*제목*/
+		</if>
+		<if test="cont_ents != null and cont_ents != ''">
+			CONT_ENTS = #{cont_ents},				/*내용*/
+		</if>
+		<if test="cate_gory != null and cate_gory != ''">
+			CATE_GORY = #{cate_gory},
+		</if>
+			UPDA_DATE = now()						/*수정일자*/
 		WHERE IDXX_NUMB = #{idxx_numb}
 	</update>
 

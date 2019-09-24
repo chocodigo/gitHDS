@@ -89,9 +89,10 @@
  +------------------------------------*/
  function week_close(){
 	 
-	 setCookie("todayCookie","done", 7);	//파라미터: 쿠키 이름, 7일 경과시 done, 7일동안 열지 않기
-	 										//7일간 열지 않음 설정
-	 $("#howto_popup").css("display","none");	//팝업 사라짐
+	 setCookie("todayCookie","done", 7);			//파라미터: 쿠키 이름, 7일 경과시 done, 7일동안 열지 않기
+	 												//7일간 열지 않음 설정
+	 //$("#howto_popup").css("display","none");		//팝업 사라짐
+	 $("#closeBtn").click();	//팝업 사라짐
  }
  
  /*-----------------------------------+
@@ -324,7 +325,7 @@ function back(menu){
 	      <div class="modal-content">
 	        <div class="modal-header">
 	          <h5 class="modal-title">장애 접수 처리 과정</h5>
-	          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <button id="closeBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
 	            <span aria-hidden="true">&times;</span>
 	          </button>
 	        </div>

@@ -3,6 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<% pageContext.setAttribute("LF", "\n"); %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -100,7 +102,7 @@
             </tr>
             <tr>
                 <td>내용</td>
-                <td colspan="3">${detail_comment.comm_cont}</td>
+                <td colspan="3"><c:out value="${fn:replace(detail_comment.comm_cont,LF,'<br>')}" escapeXml="false"/></td>
             </tr>
             <tr>
                 <td>첨부파일</td>

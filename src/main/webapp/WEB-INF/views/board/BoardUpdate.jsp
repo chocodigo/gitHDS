@@ -84,30 +84,7 @@
 +------------------------------------*/
 function changePlaceholder(){
 	 var select_code =  $("#select_category option:selected").val();	//선택한 값의 code 가져오기
-	 
-	 switch(select_code){
-        case '01':
-             $("#cate_gory").val(select_code);
-             break;
-         case '02':
-             $("#cate_gory").val(select_code);
-             break;
-         case '03':
-             $("#cate_gory").val(select_code);
-             break;
-         case '04':
-            $("#cate_gory").val(select_code);
-             break;
-         case '05':
-             $("#cate_gory").val(select_code);
-             break;
-         case '06':
-            $("#cate_gory").val(select_code);
-            break;
-         case '07':
-            $("#cate_gory").val(select_code);
-            break;
-	 }
+	 $("#cate_gory").val(select_code);
 }
 
 /*-----------------------------------+
@@ -157,7 +134,7 @@ function deleteFileSuccessCallBack(data){
 						<select id="select_category" style="border:0" onchange="changePlaceholder()">
 							<option value="cate_all">카테고리</option>
 							<c:forEach var="item" items="${category_list }">
-								<option value="${item.comm_code }">${item.code_name }</option>
+								<option value="${item.comm_code }" <c:if test="${item.comm_code eq detail.cate_gory}">selected</c:if>>${item.code_name }</option>
 							</c:forEach>
 						</select>
                     </td>
